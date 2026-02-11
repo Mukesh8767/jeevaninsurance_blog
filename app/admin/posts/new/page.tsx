@@ -15,20 +15,20 @@ type TextSpan = {
 
 type Block =
   | {
-      id: string;
-      type: 'heading';
-      data: { level: 1 | 2 | 3; text: TextSpan[] };
-    }
+    id: string;
+    type: 'heading';
+    data: { level: 1 | 2 | 3; text: TextSpan[] };
+  }
   | {
-      id: string;
-      type: 'paragraph';
-      data: { text: TextSpan[] };
-    }
+    id: string;
+    type: 'paragraph';
+    data: { text: TextSpan[] };
+  }
   | {
-      id: string;
-      type: 'image';
-      data: { url: string; caption?: TextSpan[] };
-    };
+    id: string;
+    type: 'image';
+    data: { url: string; caption?: TextSpan[] };
+  };
 
 /* ================= PAGE ================= */
 
@@ -49,7 +49,7 @@ export default function CreatePostPage() {
 
   const updateBlock = (id: string, newBlock: Partial<Block>) => {
     setBlocks(b =>
-      b.map(block => (block.id === id ? { ...block, ...newBlock } : block))
+      b.map(block => (block.id === id ? ({ ...block, ...newBlock } as Block) : block))
     );
   };
 
@@ -68,7 +68,7 @@ export default function CreatePostPage() {
         <input
           placeholder="Post title"
           value={title}
-          onChange={e => setTitle(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
           className="w-full text-5xl font-extrabold outline-none mb-14 placeholder:text-gray-300"
         />
 
@@ -135,10 +135,10 @@ function BlockRenderer({
             block.data.level === 1
               ? '2.5rem'
               : block.data.level === 2
-              ? '2rem'
-              : '1.6rem',
+                ? '2rem'
+                : '1.6rem',
         }}
-        onInput={e =>
+        onInput={(e: React.FormEvent<HTMLElement>) =>
           updateBlock(block.id, {
             data: { ...block.data, text: [{ text: e.currentTarget.textContent || '' }] },
           })
@@ -157,7 +157,7 @@ function BlockRenderer({
         suppressContentEditableWarning
         onKeyDown={onKeyDown}
         className="outline-none text-lg leading-8 text-gray-800 min-h-[28px]"
-        onInput={e =>
+        onInput={(e: React.FormEvent<HTMLDivElement>) =>
           updateBlock(block.id, {
             data: { text: [{ text: e.currentTarget.textContent || '' }] },
           })
@@ -179,7 +179,7 @@ function BlockRenderer({
           contentEditable
           suppressContentEditableWarning
           className="text-center text-sm text-gray-500 outline-none"
-          onInput={e =>
+          onInput={(e: React.FormEvent<HTMLElement>) =>
             updateBlock(block.id, {
               data: {
                 ...block.data,
@@ -188,7 +188,7 @@ function BlockRenderer({
             })
           }
         >
-          {block.data.caption?.map(c => c.text).join('')}
+          {block.data.caption?.map((c: TextSpan) => c.text).join('')}
         </figcaption>
       </figure>
     );
