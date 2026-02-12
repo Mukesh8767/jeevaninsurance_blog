@@ -165,45 +165,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Strategic Engagement CTA */}
-      <section className="py-48 bg-slate-950 relative overflow-hidden text-center">
-        <div className="absolute inset-0 opacity-20">
-          <CategoryVisual type="retirement" className="w-full h-full rounded-none" animate={true} />
-        </div>
 
-        <div className="container mx-auto px-6 lg:px-12 relative z-10">
-          <div className="max-w-4xl mx-auto space-y-12">
-            <div className="inline-flex items-center gap-4 text-secondary">
-              <span className="h-px w-8 bg-secondary"></span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.4em]">Engagement</span>
-              <span className="h-px w-8 bg-secondary"></span>
-            </div>
-
-            <h2 className="text-5xl lg:text-8xl font-bold text-white tracking-tighter leading-[0.9]">
-              Ready to <br />
-              <span className="text-slate-500">define your strategy?</span>
-            </h2>
-
-            <p className="text-xl text-slate-400 font-light max-w-2xl mx-auto leading-relaxed">
-              Join the 2,500+ families who have secured their future through our data-driven advisory. Your first strategic briefing is complimentary.
-            </p>
-
-            <div className="pt-8">
-              <Link
-                href="/contact"
-                className="group inline-flex items-center gap-4 px-12 py-6 bg-white text-primary font-bold uppercase tracking-[0.2em] text-xs hover:bg-secondary hover:text-white transition-all duration-500 shadow-2xl shadow-secondary/20"
-              >
-                Request a Strategic Briefing
-                <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative corner elements */}
-        <div className="absolute bottom-0 left-0 w-64 h-64 border-l border-b border-slate-800 opacity-20 translate-x-12 -translate-y-12" />
-        <div className="absolute top-0 right-0 w-64 h-64 border-r border-t border-slate-800 opacity-20 -translate-x-12 translate-y-12" />
-      </section>
     </div>
   );
 }

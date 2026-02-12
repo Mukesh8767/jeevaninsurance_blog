@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, ShieldCheck, Phone, MessageSquare } from 'lucide-react';
+import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,11 +21,13 @@ const WhatsAppIcon = ({ className, size = 24 }: { className?: string; size?: num
 );
 
 const links = [
-    { href: '/category/life-insurance', label: 'Life' },
-    { href: '/category/health-insurance', label: 'Health' },
-    { href: '/category/motor-insurance', label: 'Motor' },
-    { href: '/category/mutual-funds-sip', label: 'Investments' },
-    { href: '/category/loans', label: 'Loans' },
+    { href: '/', label: 'Home', icon: Home },
+    { href: '/category/life-insurance', label: 'Life', icon: Heart },
+    { href: '/category/health-insurance', label: 'Health', icon: Activity },
+    { href: '/category/motor-insurance', label: 'Motor', icon: Car },
+    { href: '/category/mutual-funds-sip', label: 'Investments', icon: TrendingUp },
+    { href: '/category/loans', label: 'Loans', icon: Landmark },
+    { href: '/terms', label: 'Terms', icon: Shield },
 ];
 
 export default function Navbar() {
@@ -70,13 +72,17 @@ export default function Navbar() {
                         </Link>
 
                         {/* Desktop Menu */}
-                        <div className="hidden lg:flex items-center gap-8">
+                        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
                             {links.map(link => (
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="relative group py-2"
+                                    className="relative group py-2 flex items-center gap-2"
                                 >
+                                    <link.icon size={16} className={cn(
+                                        "transition-colors duration-300",
+                                        pathname === link.href ? "text-primary" : "text-slate-400 group-hover:text-primary"
+                                    )} />
                                     <span className={cn(
                                         "text-sm font-medium transition-all duration-300",
                                         pathname === link.href ? "text-primary" : "text-slate-500 group-hover:text-primary group-hover:tracking-wide"
@@ -87,30 +93,23 @@ export default function Navbar() {
                                         "absolute bottom-0 left-0 h-[2px] bg-secondary transition-all duration-300 ease-out",
                                         pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
                                     )} />
-                                    {pathname === link.href && (
-                                        <motion.div
-                                            layoutId="nav-active"
-                                            className="absolute -inset-x-2 -inset-y-1 bg-primary/5 rounded-lg -z-10"
-                                            transition={{ type: "spring", bounce: 0.3, duration: 0.6 }}
-                                        />
-                                    )}
                                 </Link>
                             ))}
 
-                            <div className="pl-4 border-l border-slate-200 flex items-center gap-4">
+                            <div className="w-px h-6 bg-slate-200 mx-2" />
+
+                            <div className="flex items-center gap-4">
                                 <a
                                     href="tel:+919588472632"
-                                    className="flex items-center gap-2 text-primary hover:text-secondary transition-colors"
+                                    className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-primary border border-slate-100 hover:bg-white hover:shadow-md hover:border-primary/20 transition-all"
                                 >
-                                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                        <Phone size={14} />
-                                    </div>
+                                    <Phone size={16} />
                                 </a>
                                 <a
                                     href="https://wa.me/919588472632"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#25D366] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#128C7E] transition-all shadow-lg shadow-green-200"
+                                    className="hidden xl:inline-flex items-center gap-2 px-5 py-2 bg-[#25D366] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#128C7E] transition-all shadow-lg shadow-green-200 hover:-translate-y-0.5"
                                 >
                                     <WhatsAppIcon size={16} />
                                     WhatsApp
@@ -120,80 +119,99 @@ export default function Navbar() {
 
                         {/* Mobile Toggle */}
                         <button
-                            className="lg:hidden p-2 text-slate-900 z-50 focus:outline-none"
+                            className="lg:hidden p-2 text-primary z-50 focus:outline-none"
                             onClick={() => setIsOpen(!isOpen)}
                         >
-                            <AnimatePresence mode='wait'>
-                                {isOpen ? (
-                                    <motion.div
-                                        key="close"
-                                        initial={{ opacity: 0, rotate: -90 }}
-                                        animate={{ opacity: 1, rotate: 0 }}
-                                        exit={{ opacity: 0, rotate: 90 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <X size={24} />
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        key="menu"
-                                        initial={{ opacity: 0, rotate: 90 }}
-                                        animate={{ opacity: 1, rotate: 0 }}
-                                        exit={{ opacity: 0, rotate: -90 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
-                                        <Menu size={24} />
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                            <Menu size={28} />
                         </button>
                     </div>
                 </div>
 
-                {/* Mobile Menu Overlay */}
+                {/* Mobile Menu Overlay - Side Sheet */}
                 <AnimatePresence>
                     {isOpen && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "100vh" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                            className="fixed inset-0 bg-white z-40 lg:hidden pt-24 px-6 overflow-y-auto"
-                        >
-                            <div className="flex flex-col space-y-4">
-                                {links.map((link, i) => (
-                                    <motion.div
-                                        key={link.href}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: i * 0.1 }}
-                                    >
-                                        <Link
-                                            href={link.href}
-                                            className="block text-2xl font-bold text-slate-800 py-3 border-b border-slate-100"
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsOpen(false)}
+                                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+                            />
+                            <motion.div
+                                initial={{ x: '100%' }}
+                                animate={{ x: 0 }}
+                                exit={{ x: '100%' }}
+                                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                                className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white z-50 lg:hidden shadow-2xl border-l border-slate-100"
+                            >
+                                <div className="p-6 h-full flex flex-col">
+                                    <div className="flex justify-between items-center mb-8">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">J</div>
+                                            <span className="text-lg font-bold text-primary">Menu</span>
+                                        </div>
+                                        <button
                                             onClick={() => setIsOpen(false)}
+                                            className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
                                         >
-                                            {link.label}
-                                        </Link>
-                                    </motion.div>
-                                ))}
+                                            <X size={20} className="text-slate-600" />
+                                        </button>
+                                    </div>
 
-                                <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: links.length * 0.1 + 0.1 }}
-                                    className="pt-8 flex flex-col gap-4"
-                                >
-                                    <Link
-                                        href="/contact"
-                                        className="block text-xl font-medium text-slate-600"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        Contact Us
-                                    </Link>
-                                </motion.div>
-                            </div>
-                        </motion.div>
+                                    <div className="flex-1 overflow-y-auto">
+                                        <div className="space-y-1">
+                                            {links.map((link, i) => (
+                                                <Link
+                                                    key={link.href}
+                                                    href={link.href}
+                                                    className={cn(
+                                                        "flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all border border-transparent",
+                                                        pathname === link.href
+                                                            ? "bg-primary/5 text-primary font-bold border-primary/10"
+                                                            : "text-slate-600 hover:bg-slate-50 hover:text-primary"
+                                                    )}
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    <link.icon size={18} className={pathname === link.href ? "text-secondary" : "text-slate-400"} />
+                                                    {link.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+
+                                        <div className="h-px bg-slate-100 my-4" />
+
+                                        <div className="space-y-4 px-4">
+                                            <Link
+                                                href="/contact"
+                                                className="flex items-center gap-3 text-slate-600 hover:text-primary transition-colors"
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                                                    <MessageSquare size={16} />
+                                                </div>
+                                                <span className="font-medium">Contact Us</span>
+                                            </Link>
+                                            <a
+                                                href="tel:+919588472632"
+                                                className="flex items-center gap-3 text-slate-600 hover:text-primary transition-colors"
+                                            >
+                                                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                                                    <Phone size={16} />
+                                                </div>
+                                                <span className="font-medium">Call Now</span>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-auto pt-8 border-t border-slate-100">
+                                        <p className="text-xs text-slate-400 text-center">
+                                            © {new Date().getFullYear()} JivanSecure
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </>
                     )}
                 </AnimatePresence>
             </motion.nav>
