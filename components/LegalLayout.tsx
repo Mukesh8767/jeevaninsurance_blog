@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Lock, Megaphone, AlertCircle, Mail, ChevronRight, Menu, X, ArrowRight, FileText, CheckCircle2 } from 'lucide-react';
+import { Shield, Lock, Megaphone, AlertCircle, Mail, ChevronRight, Menu, X, ArrowRight, FileText, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 interface Section {
     id: string;
@@ -14,35 +16,18 @@ interface Section {
 }
 
 export default function LegalLayout({ initialSection = 'terms' }: { initialSection?: string }) {
-    const [activeSection, setActiveSection] = useState(initialSection);
+    const params = useParams();
+    const slug = params?.slug as string || initialSection;
+    const [activeSection, setActiveSection] = useState(slug);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
 
-    // Dynamic Title based on active section
-    const currentSectionTitle = sections.find(s => s.id === activeSection)?.title || 'Legal';
-
-    // Scroll Progress Handler
+    // Sync active section with URL slug
     useEffect(() => {
-        const handleScroll = () => {
-            const totalScroll = document.documentElement.scrollTop;
-            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scroll = `${totalScroll / windowHeight}`;
-            setScrollProgress(Number(scroll));
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        if (initialSection && initialSection !== 'terms') {
-            const element = document.getElementById(initialSection);
-            if (element) {
-                const yOffset = -120;
-                const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({ top: y, behavior: 'smooth' });
-            }
+        if (slug) {
+            setActiveSection(slug);
         }
-    }, [initialSection]);
+    }, [slug]);
 
     const scrollToSection = (id: string) => {
         setActiveSection(id);
@@ -99,157 +84,50 @@ export default function LegalLayout({ initialSection = 'terms' }: { initialSecti
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                         className="max-w-4xl"
                     >
-                        
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
-                            Trust Center & <br />
+
+                        <h1 className="text-3xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-4 md:mb-6 leading-[1.2] md:leading-[1.1]">
+                            {sections.find(s => s.id === activeSection)?.title} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary to-emerald-400">
-                                Legal Framework
+                                JivanSecure Policy
                             </span>
                         </h1>
-                        <p className="text-slate-400 text-lg lg:text-xl font-light max-w-2xl leading-relaxed">
-                            A clear, transparent guide to our relationship. We believe in open standards and protecting your interests at every step.
+                        <p className="text-slate-400 text-base md:text-lg lg:text-xl font-light max-w-2xl leading-relaxed">
+                            {sections.find(s => s.id === activeSection)?.summary}
                         </p>
                     </motion.div>
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 lg:px-8 max-w-7xl -mt-10 mb-24 relative z-20">
-                <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
-
-                    {/* Desktop Sidebar */}
-                    <aside className="hidden lg:block lg:w-1/4">
-                        <div className="sticky top-28 space-y-8">
-                            <div className="bg-white/80 backdrop-blur rounded-2xl border border-slate-200 shadow-sm p-4">
-                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 px-4">Navigation</h3>
-                                <div className="space-y-1">
-                                    {sections.map((section) => (
-                                        <button
-                                            key={section.id}
-                                            onClick={() => scrollToSection(section.id)}
-                                            className={cn(
-                                                "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-left group",
-                                                activeSection === section.id
-                                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                                    : "text-slate-600 hover:bg-slate-100"
-                                            )}
-                                        >
-                                            <section.icon size={18} className={cn("transition-colors", activeSection === section.id ? "text-secondary" : "text-slate-400 group-hover:text-primary")} />
-                                            <span className="font-medium text-sm">{section.title}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="bg-gradient-to-br from-primary to-slate-900 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/20 rounded-full blur-[40px] -translate-y-1/2 translate-x-1/2" />
-                                <Shield className="w-8 h-8 text-secondary mb-4" />
-                                <h4 className="font-bold text-lg mb-2">Need help?</h4>
-                                <p className="text-sm text-slate-300 mb-4 font-light">
-                                    Can't find what you're looking for? direct line to our legal team.
-                                </p>
-                                <a href="mailto:jivansecure@gmail.com" className="text-xs font-bold uppercase tracking-widest text-secondary hover:text-white transition-colors">Contact Support →</a>
-                            </div>
-                        </div>
-                    </aside>
-
-                    {/* Mobile Floating Menu Button */}
-                    <div className="lg:hidden fixed bottom-6 right-6 z-50">
-                        <button
-                            onClick={() => setIsMobileMenuOpen(true)}
-                            className="bg-primary text-white p-4 rounded-full shadow-2xl shadow-primary/30 flex items-center gap-2 pr-6"
-                        >
-                            <Menu size={20} />
-                            <span className="font-bold text-sm">Contents</span>
-                        </button>
-                    </div>
-
-                    {/* Mobile Menu Sheet */}
-                    <AnimatePresence>
-                        {isMobileMenuOpen && (
-                            <>
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] lg:hidden"
-                                />
-                                <motion.div
-                                    initial={{ y: "100%" }}
-                                    animate={{ y: 0 }}
-                                    exit={{ y: "100%" }}
-                                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                                    className="fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl z-[70] lg:hidden max-h-[85vh] overflow-y-auto"
-                                >
-                                    <div className="p-6">
-                                        <div className="flex items-center justify-between mb-8">
-                                            <span className="text-lg font-bold text-primary">Content Guide</span>
-                                            <button
-                                                onClick={() => setIsMobileMenuOpen(false)}
-                                                className="p-2 bg-slate-100 rounded-full text-slate-500"
-                                            >
-                                                <X size={20} />
-                                            </button>
-                                        </div>
-                                        <div className="space-y-2">
-                                            {sections.map((section) => (
-                                                <button
-                                                    key={section.id}
-                                                    onClick={() => scrollToSection(section.id)}
-                                                    className={cn(
-                                                        "w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all",
-                                                        activeSection === section.id
-                                                            ? "bg-primary text-white border-primary"
-                                                            : "bg-white border-slate-100 text-slate-600"
-                                                    )}
-                                                >
-                                                    <div className={cn(
-                                                        "w-10 h-10 rounded-lg flex items-center justify-center shrink-0",
-                                                        activeSection === section.id ? "bg-white/10" : "bg-slate-50"
-                                                    )}>
-                                                        <section.icon size={20} className={activeSection === section.id ? "text-secondary" : "text-slate-400"} />
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-bold text-sm">{section.title}</div>
-                                                        <div className={cn("text-xs mt-0.5 opacity-80", activeSection === section.id ? "text-slate-300" : "text-slate-400")}>Tap to read</div>
-                                                    </div>
-                                                    {activeSection === section.id && <CheckCircle2 size={18} className="ml-auto text-secondary" />}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Main Content Area */}
-                    <main className="lg:w-3/4 space-y-16">
-                        {sections.map((section, index) => (
+            <div className="container mx-auto px-4 lg:px-8 max-w-5xl -mt-10 mb-24 relative z-20">
+                <div className="flex justify-center">
+                    {/* Main Content Area - Full Width & Centered */}
+                    <main className="w-full">
+                        {sections.filter(s => s.id === activeSection).map((section, index) => (
                             <motion.section
                                 key={section.id}
                                 id={section.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-100px" }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5 }}
                                 className="scroll-mt-32"
                             >
                                 {/* Section Header */}
-                                <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-sm border border-slate-200 relative overflow-hidden group hover:border-slate-300 transition-colors">
+                                <div className="bg-white rounded-3xl p-8 lg:p-12 shadow-sm border border-slate-200 relative overflow-hidden group hover:border-slate-300 transition-colors min-h-[600px]">
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
 
                                     <div className="relative z-10">
-                                        <div className="flex items-center gap-4 mb-8">
-                                            <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
-                                                <section.icon size={28} />
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Section 0{index + 1}</span>
-                                                    <div className="h-px w-8 bg-slate-200" />
+                                        <div className="flex items-center justify-between mb-8 pb-8 border-b border-slate-100">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
+                                                    <section.icon size={28} />
                                                 </div>
-                                                <h2 className="text-3xl font-bold text-primary">{section.title}</h2>
+                                                <div>
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Official Document</span>
+                                                        <div className="h-px w-8 bg-slate-200" />
+                                                    </div>
+                                                    <h2 className="text-2xl md:text-3xl font-bold text-primary">{section.title}</h2>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -262,12 +140,12 @@ export default function LegalLayout({ initialSection = 'terms' }: { initialSecti
                                         </div>
 
                                         {/* Content */}
-                                        <div className="prose prose-slate prose-lg max-w-none prose-headings:text-primary prose-a:text-secondary hover:prose-a:text-secondary/80 prose-li:marker:text-secondary">
+                                        <div className="prose prose-slate prose-base md:prose-lg max-w-none prose-headings:text-primary prose-a:text-secondary hover:prose-a:text-secondary/80 prose-li:marker:text-secondary">
                                             {section.content}
                                         </div>
 
                                         <div className="mt-12 pt-6 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                                            <span>Last reviewed: <span className="text-slate-600 font-medium">Feb 12, 2026</span></span>
+                                            <span>Last reviewed: <span className="text-slate-600 font-medium">Feb 14, 2026</span></span>
                                             <span>JivanSecure Framework v2.0</span>
                                         </div>
                                     </div>
