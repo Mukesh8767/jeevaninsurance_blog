@@ -1,115 +1,65 @@
 'use client';
 
-import ContactForm from './ContactForm';
 import { motion } from 'framer-motion';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import PremiumHeroVisual from './PremiumHeroVisual';
-import CountUp from './CountUp';
 
 export default function Hero() {
     return (
-        <section className="relative overflow-hidden pt-32 pb-16 lg:pt-48 lg:pb-32 bg-white">
+        <section className="relative overflow-hidden pt-32 pb-24 lg:pt-48 lg:pb-32 bg-white flex flex-col items-center justify-center min-h-[85vh]">
             <PremiumHeroVisual />
 
-            <div className="container mx-auto px-6 lg:px-12 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-20 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="space-y-12"
-                    >
-                        <div className="space-y-6">
-
-                            <h1 className="text-6xl lg:text-[100px] font-bold tracking-tighter text-slate-900 leading-[0.9] lg:leading-[0.85]">
-                                Protecting <br />
-                                <motion.span
-                                    initial={{ clipPath: 'inset(0 100% 0 0)' }}
-                                    animate={{ clipPath: 'inset(0 0% 0 0)' }}
-                                    transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                                    className="text-blue-600 inline-block mt-3"
-                                >
-                                    What Matters.
-                                </motion.span>
-                            </h1>
-                        </div>
-
-                        <p className="text-xl lg:text-2xl text-slate-500 leading-relaxed max-w-lg font-light">
-                            Navigate the complexities of risk and wealth with India's most transparent financial architects.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-6 pt-4">
-                            <motion.a
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                href="#solutions"
-                                className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 bg-slate-900 text-white text-[10px] font-bold uppercase tracking-[0.2em] overflow-hidden transition-all shadow-2xl shadow-slate-300"
+            <div className="container mx-auto px-6 lg:px-12 relative z-10 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="max-w-4xl mx-auto space-y-8 lg:space-y-12"
+                >
+                    <div className="space-y-6 py-6">
+                       
+                        <h1 className="text-5xl md:text-7xl lg:text-[100px] font-bold tracking-tighter text-primary leading-[1.1] lg:leading-[0.9]">
+                            Trusted <br className="hidden md:block" />
+                            <motion.span
+                                initial={{ clipPath: 'inset(0 100% 0 0)' }}
+                                animate={{ clipPath: 'inset(0 0% 0 0)' }}
+                                transition={{ duration: 1.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                className="text-secondary inline-block mt-2"
                             >
-                                <motion.div
-                                    className="absolute inset-0 bg-blue-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"
-                                />
-                                <span className="relative z-10 flex items-center gap-3 group-hover:px-2 transition-all duration-300">
-                                    Practice Areas
-                                    <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                                </span>
-                            </motion.a>
-                            <a
-                                href="#about"
-                                className="inline-flex items-center justify-center px-10 py-5 bg-white text-slate-900 text-[10px] font-bold uppercase tracking-[0.2em] border border-slate-200 hover:bg-slate-50 transition-colors"
-                            >
-                                Our Philosophy
-                            </a>
-                        </div>
-
-                        {/* Impact Stats */}
-                        <div className="pt-12 grid grid-cols-2 gap-12 border-t border-slate-100">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                                        <ShieldCheck size={20} className="text-blue-600" />
-                                    </div>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-bold text-slate-900"><CountUp to={2500} /></span>
-                                        <span className="text-blue-600 font-bold text-lg">+</span>
-                                    </div>
-                                </div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 pl-1">Institutional Clients</p>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center">
-                                        <div className="w-5 h-5 rounded-full border-2 border-slate-900 border-t-transparent animate-spin" />
-                                    </div>
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-3xl font-bold text-slate-900"><CountUp to={98} /></span>
-                                        <span className="text-blue-600 font-bold text-lg">%</span>
-                                    </div>
-                                </div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 pl-1">Claims Efficiency</p>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95, x: 20 }}
-                        animate={{ opacity: 1, scale: 1, x: 0 }}
-                        transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative"
-                    >
-                        <div className="absolute -inset-20 bg-gradient-to-tr from-blue-100/30 via-slate-50/20 to-white rounded-full blur-[100px] opacity-60 -z-10 animate-pulse" />
-                        <ContactForm className="shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-slate-100" />
-                    </motion.div>
-                </div>
-
-                {/* Preferred Carriers / Partner Section */}
-                <div className="mt-32 pt-16 border-t border-slate-100">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-400 mb-12 text-center opacity-70">Strategic Partner Ecosystem</p>
-                    <div className="flex flex-wrap justify-center items-center gap-x-20 gap-y-12 opacity-40 grayscale hover:grayscale-0 transition-all duration-1000">
-                        {['HDFC Life', 'ICICI Lombard', 'Star Health', 'Max Life', 'Tata AIA'].map(partner => (
-                            <span key={partner} className="text-xl font-serif italic text-slate-950 font-bold tracking-tight hover:text-blue-600 transition-colors cursor-default">{partner}</span>
-                        ))}
+                                Insurance Solutions.
+                            </motion.span>
+                        </h1>
                     </div>
-                </div>
+
+                    <p className="text-lg lg:text-2xl text-slate-500 leading-relaxed max-w-2xl mx-auto font-light">
+                        Securing your Life, Health, and Vehicles with expert advice from Satish Mishra.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center pt-8">
+                        <motion.a
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            href="#solutions"
+                            className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 lg:px-12 lg:py-6 bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] overflow-hidden transition-all shadow-xl lg:shadow-2xl shadow-primary/30 rounded-full w-full sm:w-auto"
+                        >
+                            <motion.div
+                                className="absolute inset-0 bg-secondary translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"
+                            />
+                            <span className="relative z-10 flex items-center gap-3 group-hover:px-2 transition-all duration-300">
+                                Get Quote
+                                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </span>
+                        </motion.a>
+                        <motion.a
+                            whileHover={{ scale: 1.05, y: -2 }}
+                            whileTap={{ scale: 0.95 }}
+                            href="#about"
+                            className="inline-flex items-center justify-center px-8 py-4 lg:px-12 lg:py-6 bg-white text-primary text-xs font-bold uppercase tracking-[0.2em] border border-slate-200 hover:border-secondary hover:text-secondary transition-all rounded-full shadow-sm w-full sm:w-auto"
+                        >
+                            Our Philosophy
+                        </motion.a>
+                    </div>
+                </motion.div>
             </div>
         </section>
     );

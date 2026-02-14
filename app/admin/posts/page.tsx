@@ -43,10 +43,14 @@ export default function PostsPage() {
     };
 
     const deletePost = async (id: string) => {
-        if (!confirm('Are you sure?')) return;
+        if (!confirm('Are you sure you want to delete this post?')) return;
         const { error } = await supabase.from('posts').delete().eq('id', id);
-        if (!error) fetchPosts();
-        else alert('Error deleting post');
+        if (!error) {
+            fetchPosts();
+        } else {
+            console.error('Delete error:', error);
+            alert(`Error deleting post: ${error.message}`);
+        }
     };
 
     const publishPost = async (id: string) => {

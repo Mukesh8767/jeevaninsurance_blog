@@ -37,7 +37,7 @@ export default function ServicePage() {
                         alt={data.title}
                         className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-white" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
                 </motion.div>
 
                 {/* Back Link */}
@@ -79,7 +79,7 @@ export default function ServicePage() {
                     <article className="lg:col-span-8 space-y-16">
                         {/* Introduction */}
                         <section className="space-y-8">
-                            <p className="text-2xl lg:text-3xl text-slate-800 font-serif italic leading-relaxed text-balance">
+                            <p className="text-xl lg:text-xl text-slate-800 font-serif italic leading-relaxed text-balance">
                                 "{data.fullContent.intro}"
                             </p>
                         </section>
@@ -98,7 +98,7 @@ export default function ServicePage() {
                                         </div>
                                         <div className="space-y-2">
                                             <h3 className="text-xl font-bold text-slate-900">{benefit.title}</h3>
-                                            <p className="text-slate-500 leading-relaxed font-light">{benefit.desc}</p>
+                                            <p className="text-slate-500 leading-relaxed font-light ">{benefit.desc}</p>
                                         </div>
                                     </div>
                                 ))}

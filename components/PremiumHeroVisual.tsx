@@ -46,7 +46,7 @@ export default function PremiumHeroVisual() {
                     translateX: '-50%',
                     translateY: '-50%',
                 }}
-                className="absolute top-0 left-0 w-[600px] h-[600px] bg-blue-400/5 blur-[120px] rounded-full pointer-events-none"
+                className="absolute top-0 left-0 w-[600px] h-[600px] bg-secondary/5 blur-[120px] rounded-full pointer-events-none"
             />
 
             {/* Mesh Gradient Blobs with Parallax */}
@@ -61,7 +61,7 @@ export default function PremiumHeroVisual() {
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="absolute -top-[10%] -left-[5%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-blue-100/40 to-indigo-100/20 blur-[100px]"
+                    className="absolute -top-[10%] -left-[5%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-primary/[0.05] to-secondary/[0.05] blur-[100px]"
                 />
                 <motion.div
                     style={{ x: layer2X, y: layer2Y }}
@@ -73,7 +73,7 @@ export default function PremiumHeroVisual() {
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="absolute top-[30%] -right-[5%] w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-slate-100 to-blue-50/50 blur-[100px]"
+                    className="absolute top-[30%] -right-[5%] w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-slate-50 to-secondary/5 blur-[100px]"
                 />
             </div>
 
@@ -84,7 +84,7 @@ export default function PremiumHeroVisual() {
                         <path d="M 5 0 L 0 0 0 5" fill="none" stroke="currentColor" strokeWidth="0.05" className="text-slate-900" />
                     </pattern>
                     <radialGradient id="grad-spot" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.4" />
+                        <stop offset="0%" stopColor="#008C3E" stopOpacity="0.4" />
                         <stop offset="100%" stopColor="transparent" />
                     </radialGradient>
                 </defs>
@@ -95,9 +95,9 @@ export default function PremiumHeroVisual() {
             <svg className="absolute inset-0 w-full h-full opacity-[0.2]" viewBox="0 0 1000 1000" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="ribbon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0" />
-                        <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#008C3E" stopOpacity="0" />
+                        <stop offset="50%" stopColor="#000155" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#008C3E" stopOpacity="0" />
                     </linearGradient>
                 </defs>
                 <motion.path
@@ -141,7 +141,7 @@ export default function PremiumHeroVisual() {
                 </defs>
 
                 {/* Floating "Security & Trust" Nodes - Slower & Smoother */}
-                {[...Array(15)].map((_, i) => (
+                {[...Array(8)].map((_, i) => (
                     <motion.g
                         key={`node-${i}`}
                         initial={{
@@ -161,11 +161,11 @@ export default function PremiumHeroVisual() {
                             ease: "linear"
                         }}
                     >
-                        <circle r={Math.random() * 2 + 1} fill={i % 3 === 0 ? "#3b82f6" : "#cbd5e1"} filter="url(#node-glow-hero)" />
+                        <circle r={Math.random() * 2 + 1} fill={i % 3 === 0 ? "#008C3E" : "#000155"} filter="url(#node-glow-hero)" className="opacity-40" />
                         {i % 4 === 0 && (
                             <motion.circle
                                 r="12"
-                                stroke="#3b82f6"
+                                stroke="#008C3E"
                                 strokeWidth="0.1"
                                 fill="none"
                                 className="opacity-10"
@@ -177,13 +177,7 @@ export default function PremiumHeroVisual() {
                 ))}
             </svg>
 
-            {/* Grain Texture */}
-            <svg className="absolute inset-0 w-full h-full opacity-[0.03] pointer-events-none">
-                <filter id="heroNoise">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
-                </filter>
-                <rect width="100%" height="100%" filter="url(#heroNoise)" />
-            </svg>
+
 
             {/* Bottom Fade */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/20 to-white" />

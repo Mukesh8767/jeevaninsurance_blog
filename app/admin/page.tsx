@@ -69,10 +69,14 @@ export default function AdminDashboard() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this draft?')) return;
+        if (!confirm('Are you sure you want to delete this post?')) return;
         const { error } = await supabase.from('posts').delete().eq('id', id);
-        if (error) alert(error.message);
-        else fetchData();
+        if (error) {
+            console.error('Delete error:', error);
+            alert(`Delete failed: ${error.message} (${error.code || 'No code'})`);
+        } else {
+            fetchData();
+        }
     };
 
     if (loading) return <div className="text-slate-400">Loading dashboard...</div>;
@@ -167,12 +171,12 @@ export default function AdminDashboard() {
                                             </button>
                                         )}
                                         <Link
-                                            href={`/admin/posts/edit/${post.id}`}
+                                            href={`/admin/posts/${post.id}/edit`}
                                             className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors"
                                         >
                                             <ExternalLink size={16} />
                                         </Link>
-                                        {isAdmin && (
+                                        {(isAdmin || post.author_id === profile?.id) && (
                                             <button
                                                 onClick={() => handleDelete(post.id)}
                                                 className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"

@@ -63,15 +63,15 @@ export default function ContactForm({ className }: { className?: string }) {
                 className={cn("p-12 bg-white rounded-none border border-slate-100 text-center shadow-2xl shadow-slate-200/50", className)}
             >
                 <div className="flex justify-center mb-6">
-                    <CheckCircle2 className="w-16 h-16 text-emerald-500" />
+                    <CheckCircle2 className="w-16 h-16 text-secondary" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">Request Received</h3>
+                <h3 className="text-2xl font-bold text-primary mb-2">Request Received</h3>
                 <p className="text-slate-500 mb-8 font-light">
                     Thank you. A senior consultant will review your profile and contact you within 24 hours.
                 </p>
                 <button
                     onClick={() => setIsSuccess(false)}
-                    className="text-sm font-semibold text-slate-900 underline underline-offset-4 hover:text-blue-600 transition-colors"
+                    className="text-sm font-semibold text-primary underline underline-offset-4 hover:text-secondary transition-colors"
                 >
                     Submit another request
                 </button>
@@ -82,7 +82,7 @@ export default function ContactForm({ className }: { className?: string }) {
     return (
         <div className={cn("bg-white rounded-2xl p-8 lg:p-10 shadow-2xl shadow-slate-200/40 border border-slate-100", className)}>
             <div className="mb-8">
-                <h3 className="text-2xl lg:text-3xl font-bold text-slate-900 mb-2 tracking-tight">
+                <h3 className="text-2xl lg:text-3xl font-bold text-primary mb-2 tracking-tight">
                     Start a Conversation
                 </h3>
                 <p className="text-slate-500 font-light">
@@ -96,7 +96,7 @@ export default function ContactForm({ className }: { className?: string }) {
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Full Name</label>
                         <input
                             {...register('full_name')}
-                            className="w-full py-3 border-b border-slate-200 focus:border-slate-900 outline-none transition-colors bg-transparent placeholder:text-slate-300 text-slate-900 font-medium"
+                            className="w-full py-3 border-b border-slate-200 focus:border-secondary outline-none transition-colors bg-transparent placeholder:text-slate-300 text-primary font-medium"
                             placeholder="Type your name"
                         />
                         {errors.full_name && <p className="text-red-500 text-xs mt-1">{errors.full_name.message}</p>}
@@ -106,7 +106,7 @@ export default function ContactForm({ className }: { className?: string }) {
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Phone</label>
                         <input
                             {...register('phone')}
-                            className="w-full py-3 border-b border-slate-200 focus:border-slate-900 outline-none transition-colors bg-transparent placeholder:text-slate-300 text-slate-900 font-medium"
+                            className="w-full py-3 border-b border-slate-200 focus:border-secondary outline-none transition-colors bg-transparent placeholder:text-slate-300 text-primary font-medium"
                             placeholder="+91"
                         />
                         {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
@@ -152,14 +152,16 @@ export default function ContactForm({ className }: { className?: string }) {
                 </div>
 
                 <div className="pt-4">
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={isSubmitting}
-                        className="group w-full bg-slate-900 text-white font-semibold py-4 px-6 flex justify-between items-center hover:bg-slate-800 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="group w-full bg-primary text-white font-semibold py-4 px-6 flex justify-between items-center transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary/20 hover:shadow-primary/40 rounded-sm"
                     >
                         <span>{isSubmitting ? 'Processing request...' : 'Request Consultation'}</span>
                         {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />}
-                    </button>
+                    </motion.button>
                 </div>
             </form>
         </div>

@@ -12,11 +12,11 @@ export default function AbstractBackground({ className }: { className?: string }
             >
                 <defs>
                     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#E0F2FE" /> {/* Light Blue */}
+                        <stop offset="0%" stopColor="#f0fdf4" /> {/* Very Light Green */}
                         <stop offset="100%" stopColor="#F8FAFC" /> {/* Slate 50 */}
                     </linearGradient>
                     <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#DBEAFE" /> {/* Blue 100 */}
+                        <stop offset="0%" stopColor="#f8fafc" /> {/* Slate 50 */}
                         <stop offset="100%" stopColor="transparent" />
                     </linearGradient>
                 </defs>

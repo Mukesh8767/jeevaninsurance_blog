@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     let response = NextResponse.next({
         request: {
             headers: request.headers,
@@ -55,6 +55,7 @@ export async function middleware(request: NextRequest) {
         }
     )
 
+    // Only get session, don't try to refresh to avoid "already used" errors
     const { data: { session } } = await supabase.auth.getSession()
 
     // Protect /admin routes

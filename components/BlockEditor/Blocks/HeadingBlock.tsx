@@ -12,7 +12,7 @@ interface HeadingBlockProps {
 
 export function HeadingBlock({ data, style, onChange, onEnter, onDeleteIfEmpty }: HeadingBlockProps) {
     const level = style.level || 1;
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+    const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {

@@ -1,13 +1,14 @@
+
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { createClient } from '@/lib/supabaseServer';
 import { notFound } from 'next/navigation';
 import CategoryVisual from '@/components/CategoryVisual';
-import { Shield, TrendingUp, Phone } from 'lucide-react';
+import { Shield, TrendingUp, Phone, ArrowUpRight } from 'lucide-react';
 
 // This would typically come from a database, but bridging for the layout demo
 const categoryData: Record<string, any> = {
-    'motor-insurance': {
+    'motor': {
         title: 'Motor Insurance',
         subtitle: 'Comprehensive protection for your vehicle against accidents, theft, and liabilities.',
         features: [
@@ -16,7 +17,7 @@ const categoryData: Record<string, any> = {
             { title: 'Cashless Garages', desc: 'Network of 5000+ garages for cashless repairs.' }
         ]
     },
-    'life-insurance': {
+    'life': {
         title: 'Life Insurance',
         subtitle: 'Secure your family’s financial future with our comprehensive life cover plans.',
         features: [
@@ -25,7 +26,7 @@ const categoryData: Record<string, any> = {
             { title: 'Critical Illness Cover', desc: 'Additional protection against major illnesses.' }
         ]
     },
-    'health-insurance': {
+    'health': {
         title: 'Health Insurance',
         subtitle: 'Medical security for you and your family against rising healthcare costs.',
         features: [
@@ -34,7 +35,7 @@ const categoryData: Record<string, any> = {
             { title: 'No Claim Bonus', desc: 'Increase in sum insured for every claim-free year.' }
         ]
     },
-    'mutual-funds-sip': {
+    'mutual-fund': {
         title: 'Mutual Funds & SIP',
         subtitle: 'Wealth creation strategies tailored to your risk appetite and time horizon.',
         features: [
@@ -173,47 +174,66 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </section>
 
             {/* BLOG POSTS SECTION */}
-            <section className="py-24 bg-slate-50 border-t border-slate-200">
+            <section className="py-20 bg-white">
                 <div className="container mx-auto px-6 lg:px-12">
-                    <div className="flex items-center justify-between mb-12">
-                        <h2 className="text-3xl font-bold text-slate-900">Latest Insights</h2>
+                    <div className="mb-12">
+                        <p className="text-sm font-bold uppercase tracking-widest text-blue-600 mb-3">EXPERT INSIGHTS</p>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900">Latest Articles on {title}</h2>
                     </div>
 
                     {posts && posts.length > 0 ? (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {posts.map((post: any) => (
-                                <Link key={post.id} href={`/post/${post.slug}`} className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                    <div className="aspect-[16/9] bg-slate-100 relative overflow-hidden">
+                                <Link key={post.id} href={`/post/${post.slug}`} className="group flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200 hover:border-blue-300 shadow-sm hover:shadow-2xl transition-all duration-300">
+                                    <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-50 relative overflow-hidden">
                                         {post.cover_image_url ? (
                                             <img
                                                 src={post.cover_image_url}
                                                 alt={post.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-300">
-                                                <Shield size={48} />
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-50">
+                                                <Shield size={64} className="text-slate-300" />
                                             </div>
                                         )}
-                                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-900">
+                                        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-md text-[10px] font-bold uppercase tracking-wider text-slate-700 shadow-lg">
                                             {title}
                                         </div>
                                     </div>
-                                    <div className="flex-1 p-8 flex flex-col">
-                                        <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
+                                    <div className="flex-1 p-6 flex flex-col">
+                                        <div className="flex items-center gap-3 text-xs text-slate-500 mb-3">
+                                            <span className="flex items-center gap-1">
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                6 min read
+                                            </span>
+                                            <span>•</span>
+                                            <time>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
                                             {post.title}
                                         </h3>
-                                        <div className="mt-auto pt-6 flex items-center justify-between text-xs text-slate-500 font-medium uppercase tracking-wider">
-                                            <span>{new Date(post.created_at).toLocaleDateString()}</span>
-                                            <span>Read Article &rarr;</span>
+                                        <p className="text-sm text-slate-600 line-clamp-2 mb-4 leading-relaxed">
+                                            {/* Extract first text from blocks if available */}
+                                            {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this insightful article to learn more...'}
+                                        </p>
+                                        <div className="mt-auto pt-4 border-t border-slate-100">
+                                            <span className="text-sm font-semibold text-blue-600 group-hover:text-blue-700 inline-flex items-center gap-2">
+                                                Read Article
+                                                <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                            </span>
                                         </div>
                                     </div>
                                 </Link>
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-300">
-                            <p className="text-slate-500 text-lg">No posts available in this category yet.</p>
+                        <div className="text-center py-24 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
+                            <Shield size={48} className="mx-auto text-slate-300 mb-4" />
+                            <p className="text-slate-500 text-lg font-medium">No articles published yet in this category.</p>
+                            <p className="text-slate-400 text-sm mt-2">Check back soon for expert insights!</p>
                         </div>
                     )}
                 </div>
