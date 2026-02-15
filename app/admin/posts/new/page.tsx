@@ -60,14 +60,14 @@ export default function CreatePostPage() {
       // Fetch Profile for direct post check
       const { data: profile } = await supabase
         .from('profiles')
-        .select('can_post_direct')
+        .select('role, can_post_direct')
         .eq('id', user.id)
         .single();
 
       const { error } = await supabase.from('posts').insert({
         title,
         slug: generatedSlug,
-        status: profile?.can_post_direct ? finalStatus : 'pending',
+        status: (profile?.role === 'admin' && profile?.can_post_direct) ? finalStatus : (finalStatus === 'published' ? 'pending' : finalStatus),
         category_id: selectedCategory,
         blocks,
         author_id: user.id

@@ -33,6 +33,19 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
         const fetchData = async () => {
             setLoading(true)
             try {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) {
+                    router.push('/admin/login')
+                    return
+                }
+
+                // Fetch Profile
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', user.id)
+                    .single()
+
                 // Fetch Categories
                 const { data: catData } = await supabase.from('categories').select('*').order('title')
                 if (catData) setCategories(catData)
@@ -46,6 +59,13 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
 
                 if (error) throw error
                 if (post) {
+                    // Role Check: Contributors can only edit their own posts
+                    if (profile?.role === 'contributor' && post.author_id !== user.id) {
+                        alert('You do not have permission to edit this post.')
+                        router.push('/admin/posts')
+                        return
+                    }
+
                     setTitle(post.title)
                     setSlug(post.slug)
                     setStatus(post.status)
@@ -81,11 +101,12 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
             // Fetch Profile for direct post check
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('can_post_direct')
+                .select('role, can_post_direct')
                 .eq('id', user.id)
                 .single();
 
-            const updatedStatus = profile?.can_post_direct ? finalStatus : 'pending';
+            // Force pending if contributor tries to publish, or use can_post_direct logic
+            const updatedStatus = (profile?.role === 'admin' && profile?.can_post_direct) ? finalStatus : (finalStatus === 'published' ? 'pending' : finalStatus);
 
             const { error } = await supabase
                 .from('posts')

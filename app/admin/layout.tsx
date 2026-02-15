@@ -64,8 +64,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // Handle redirection for restricted routes
     useEffect(() => {
         if (!loading && profile && profile.role !== 'admin') {
-            const restrictedPaths = ['/admin', '/admin/users', '/admin/contacts'];
-            if (restrictedPaths.includes(pathname)) {
+            const isRestricted = pathname === '/admin' ||
+                pathname.startsWith('/admin/users') ||
+                pathname.startsWith('/admin/contacts');
+
+            if (isRestricted) {
                 router.push('/admin/posts');
             }
         }
