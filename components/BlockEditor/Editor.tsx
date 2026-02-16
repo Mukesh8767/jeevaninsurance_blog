@@ -47,6 +47,13 @@ export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; 
                 data: { url: '', caption: '' },
                 style: { width: '100%', borderRadius: '12px' }
             };
+        } else if (type === 'video') {
+            newBlock = {
+                id,
+                type: 'video',
+                data: { url: '', caption: '' },
+                style: { width: '100%', borderRadius: '12px' }
+            };
         } else {
             newBlock = {
                 id,

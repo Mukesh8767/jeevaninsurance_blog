@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heading1, Heading2, Type, Image as ImageIcon, Search } from 'lucide-react';
+import { Heading1, Heading2, Type, Image as ImageIcon, Video as VideoIcon, Search } from 'lucide-react';
 
 interface SlashMenuProps {
   onSelect: (type: string) => void;
@@ -15,6 +15,7 @@ const MENU_ITEMS = [
   { id: 'heading-2', label: 'Heading 2', icon: Heading2, description: 'Medium section heading' },
   { id: 'paragraph', label: 'Text', icon: Type, description: 'Just start writing with plain text' },
   { id: 'image', label: 'Image', icon: ImageIcon, description: 'Upload or embed from URL' },
+  { id: 'video', label: 'Video', icon: VideoIcon, description: 'Upload a video file' },
 ];
 
 export function SlashMenu({ onSelect, onClose, position }: SlashMenuProps) {
@@ -22,7 +23,7 @@ export function SlashMenu({ onSelect, onClose, position }: SlashMenuProps) {
   const [search, setSearch] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const filteredItems = MENU_ITEMS.filter(item => 
+  const filteredItems = MENU_ITEMS.filter(item =>
     item.label.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -84,9 +85,8 @@ export function SlashMenu({ onSelect, onClose, position }: SlashMenuProps) {
             key={item.id}
             onMouseEnter={() => setSelectedIndex(index)}
             onClick={() => onSelect(item.id)}
-            className={`w-full flex items-start gap-3 p-2 rounded-lg transition-colors text-left ${
-              index === selectedIndex ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'
-            }`}
+            className={`w-full flex items-start gap-3 p-2 rounded-lg transition-colors text-left ${index === selectedIndex ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'
+              }`}
           >
             <div className={`p-2 rounded-md ${index === selectedIndex ? 'bg-blue-100' : 'bg-slate-100'}`}>
               <item.icon size={18} />

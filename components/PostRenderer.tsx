@@ -83,6 +83,40 @@ export default function PostRenderer({ blocks }: { blocks: any[] }) {
                             </figure>
                         );
 
+                    case 'video':
+                        return (
+                            <figure key={id} className="my-12 space-y-4">
+                                <div className="overflow-hidden shadow-2xl shadow-slate-200" style={{ borderRadius: style?.borderRadius || '16px' }}>
+                                    {data.isEmbed ? (
+                                        <div className="aspect-video w-full">
+                                            <iframe
+                                                src={data.url}
+                                                className="w-full h-full"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    ) : (
+                                        <video
+                                            src={data.url}
+                                            controls
+                                            className="w-full h-auto object-cover"
+                                            style={{
+                                                width: style?.width || '100%',
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                {data.caption && (
+                                    <figcaption className="text-center text-sm text-slate-400 font-medium">
+                                        <span className="inline-block w-8 h-[1px] bg-slate-200 align-middle mr-2" />
+                                        {data.caption}
+                                        <span className="inline-block w-8 h-[1px] bg-slate-200 align-middle ml-2" />
+                                    </figcaption>
+                                )}
+                            </figure>
+                        );
+
                     default:
                         return null;
                 }

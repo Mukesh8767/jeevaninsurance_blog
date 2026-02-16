@@ -6,6 +6,7 @@ import { GripVertical, Trash2 } from 'lucide-react';
 import { HeadingBlock } from './Blocks/HeadingBlock';
 import { ParagraphBlock } from './Blocks/ParagraphBlock';
 import { ImageBlock } from './Blocks/ImageBlock';
+import { VideoBlock } from './Blocks/VideoBlock';
 
 export function SortableBlock({ id, block, updateBlock, removeBlock, onEnter, triggerSlash }: any) {
     const {
@@ -59,6 +60,15 @@ export function SortableBlock({ id, block, updateBlock, removeBlock, onEnter, tr
 
                 {block.type === 'image' && (
                     <ImageBlock
+                        data={block.data}
+                        style={block.style}
+                        onChange={handleChange}
+                        onDelete={() => removeBlock(id)}
+                    />
+                )}
+
+                {block.type === 'video' && (
+                    <VideoBlock
                         data={block.data}
                         style={block.style}
                         onChange={handleChange}
