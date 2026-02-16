@@ -18,9 +18,25 @@ export default function UserManagementPage() {
   const [role, setRole] = useState('contributor');
   const [showForm, setShowForm] = useState(false);
 
+  const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
+
   useEffect(() => {
-    fetchProfiles();
+    fetchInitialData();
   }, []);
+
+  const fetchInitialData = async () => {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      setCurrentUserProfile(profile);
+    }
+    await fetchProfiles();
+  };
 
   const fetchProfiles = async () => {
     setLoading(true);
@@ -69,6 +85,23 @@ export default function UserManagementPage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="animate-spin text-blue-600" size={40} />
+      </div>
+    );
+  }
+
+  if (currentUserProfile?.role !== 'admin') {
+    return (
+      <div className="p-8 bg-red-50 text-red-700 rounded-2xl border border-red-100 flex items-center gap-3">
+        <Shield size={24} />
+        <p className="font-bold">Access Denied: Only administrators can manage users.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <header className="flex justify-between items-center">
@@ -81,13 +114,15 @@ export default function UserManagementPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-blue-100 transition-all active:scale-95"
-        >
-          <UserPlus size={20} />
-          Add New User
-        </button>
+        {currentUserProfile?.role === 'admin' && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-blue-100 transition-all active:scale-95"
+          >
+            <UserPlus size={20} />
+            Add New User
+          </button>
+        )}
       </header>
 
       {showForm && (
