@@ -10,9 +10,25 @@ export default function ContactsPage() {
     const [requests, setRequests] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [currentUserProfile, setCurrentUserProfile] = useState<any>(null);
+
     useEffect(() => {
-        fetchRequests();
+        fetchInitialData();
     }, []);
+
+    const fetchInitialData = async () => {
+        setLoading(true);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+            setCurrentUserProfile(profile);
+        }
+        await fetchRequests();
+    };
 
     const fetchRequests = async () => {
         setLoading(true);
@@ -33,6 +49,23 @@ export default function ContactsPage() {
         if (error) alert(error.message);
         else fetchRequests();
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Loader2 className="animate-spin text-blue-600" size={40} />
+            </div>
+        );
+    }
+
+    if (currentUserProfile?.role !== 'admin') {
+        return (
+            <div className="p-8 bg-red-50 text-red-700 rounded-2xl border border-red-100 flex items-center gap-3">
+                <Mail size={24} />
+                <p className="font-bold">Access Denied: Only administrators can view contact requests.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8">

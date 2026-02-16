@@ -57,14 +57,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // Filter links based on role
     const filteredLinks = sidebarLinks.filter(link => {
         if (profile?.role === 'admin') return true;
-        // Contributors ONLY see Posts
-        return link.href === '/admin/posts';
+        // Contributors see Dashboard and Posts
+        return link.href === '/admin' || link.href === '/admin/posts';
     });
 
     // Handle redirection for restricted routes
     useEffect(() => {
         if (!loading && profile && profile.role !== 'admin') {
-            const isRestricted = pathname === '/admin' ||
+            const isRestricted =
                 pathname.startsWith('/admin/users') ||
                 pathname.startsWith('/admin/contacts');
 

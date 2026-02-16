@@ -96,32 +96,48 @@ export default function AdminDashboard() {
 
             {/* Stats Grid */}
             <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                            <Send size={20} />
+                {isAdmin ? (
+                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                                <Send size={20} />
+                            </div>
+                            <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">New Requests</h3>
                         </div>
-                        <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">New Requests</h3>
+                        <p className="text-4xl font-black text-slate-900 mt-4 tracking-tighter">{stats.requests}</p>
                     </div>
-                    <p className="text-4xl font-black text-slate-900 mt-4 tracking-tighter">{stats.requests}</p>
-                </div>
+                ) : (
+                    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                                <FileText size={20} />
+                            </div>
+                            <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">My Total Posts</h3>
+                        </div>
+                        <p className="text-4xl font-black text-slate-900 mt-4 tracking-tighter">{pendingPosts.length}</p>
+                    </div>
+                )}
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-green-50 text-green-600 rounded-xl">
                             <CheckCircle size={20} />
                         </div>
-                        <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">Published</h3>
+                        <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">{isAdmin ? 'Total Published' : 'Published'}</h3>
                     </div>
-                    <p className="text-4xl font-black text-slate-900 mt-4 tracking-tighter">{stats.published}</p>
+                    <p className="text-4xl font-black text-slate-900 mt-4 tracking-tighter">
+                        {isAdmin ? stats.published : pendingPosts.filter(p => p.status === 'published').length}
+                    </p>
                 </div>
                 <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-orange-50 text-orange-600 rounded-xl">
                             <Clock size={20} />
                         </div>
-                        <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">Pending Review</h3>
+                        <h3 className="text-slate-500 font-bold text-xs uppercase tracking-wider">{isAdmin ? 'Pending Review' : 'In Review'}</h3>
                     </div>
-                    <p className="text-4xl font-black text-orange-600 mt-4 tracking-tighter">{stats.pending}</p>
+                    <p className="text-4xl font-black text-orange-600 mt-4 tracking-tighter">
+                        {isAdmin ? stats.pending : pendingPosts.filter(p => p.status === 'pending').length}
+                    </p>
                 </div>
             </div>
 
