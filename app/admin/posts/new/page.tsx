@@ -20,7 +20,7 @@ export default function CreatePostPage() {
 
   const [title, setTitle] = useState('')
   const [slug, setSlug] = useState('')
-  const [status, setStatus] = useState<'draft' | 'pending' | 'published'>('draft')
+  const [status, setStatus] = useState<'draft' | 'pending' | 'published'>('pending') // Set default to pending as per requirements
   const [categories, setCategories] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [blocks, setBlocks] = useState<any[]>([
@@ -32,13 +32,24 @@ export default function CreatePostPage() {
     }
   ])
   const [loading, setLoading] = useState(false)
+  const [profile, setProfile] = useState<{ role: string, can_post_direct: boolean } | null>(null)
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const { data } = await supabase.from('categories').select('*').order('title')
-      if (data) setCategories(data)
+    const fetchData = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('role, can_post_direct')
+          .eq('id', user.id)
+          .single()
+        if (data) setProfile(data)
+      }
+
+      const { data: cats } = await supabase.from('categories').select('*').order('title')
+      if (cats) setCategories(cats)
     }
-    fetchCategories()
+    fetchData()
   }, [])
 
   const generatedSlug =
@@ -57,17 +68,10 @@ export default function CreatePostPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      // Fetch Profile for direct post check
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, can_post_direct')
-        .eq('id', user.id)
-        .single();
-
       const { error } = await supabase.from('posts').insert({
         title,
         slug: generatedSlug,
-        status: (profile?.role === 'admin' && profile?.can_post_direct) ? finalStatus : (finalStatus === 'published' ? 'pending' : finalStatus),
+        status: (profile?.role === 'admin' || profile?.can_post_direct) ? finalStatus : (finalStatus === 'published' ? 'pending' : finalStatus),
         category_id: selectedCategory,
         blocks,
         author_id: user.id
@@ -103,17 +107,30 @@ export default function CreatePostPage() {
             <button
               onClick={() => handleSave('draft')}
               disabled={loading}
-              className="px-4 py-2 rounded-lg border text-sm font-medium hover:bg-slate-100"
+              className="px-4 py-2 rounded-lg border text-sm font-medium hover:bg-slate-100 flex items-center gap-2"
             >
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
               Save Draft
             </button>
+
+            {profile?.role === 'admin' && (
+              <button
+                onClick={() => handleSave('published')}
+                disabled={loading}
+                className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-500 flex items-center gap-2"
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
+                Publish Post
+              </button>
+            )}
 
             <button
               onClick={() => handleSave('pending')}
               disabled={loading}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500"
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 flex items-center gap-2"
             >
-              Submit for Review
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
+              {profile?.role === 'admin' ? 'Save as Pending' : 'Submit for Review'}
             </button>
           </div>
         </div>

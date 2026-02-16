@@ -42,7 +42,7 @@ export default function UserManagementPage() {
     setSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('hyper-api', {
+      const { data, error } = await supabase.functions.invoke('create_user', {
         body: {
           email,
           password,

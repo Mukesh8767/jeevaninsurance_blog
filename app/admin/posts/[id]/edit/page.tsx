@@ -28,6 +28,7 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
     const [blocks, setBlocks] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
+    const [profile, setProfile] = useState<{ role: string, can_post_direct: boolean } | null>(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,11 +41,12 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
                 }
 
                 // Fetch Profile
-                const { data: profile } = await supabase
+                const { data: profileData } = await supabase
                     .from('profiles')
-                    .select('role')
+                    .select('role, can_post_direct')
                     .eq('id', user.id)
                     .single()
+                setProfile(profileData)
 
                 // Fetch Categories
                 const { data: catData } = await supabase.from('categories').select('*').order('title')
@@ -59,8 +61,9 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
 
                 if (error) throw error
                 if (post) {
-                    // Role Check: Contributors can only edit their own posts
-                    if (profile?.role === 'contributor' && post.author_id !== user.id) {
+                    // Permission Check: Contributors can only edit their own posts
+                    // Admins and Editors can edit any post
+                    if (profileData?.role === 'contributor' && post.author_id !== user.id) {
                         alert('You do not have permission to edit this post.')
                         router.push('/admin/posts')
                         return
@@ -98,15 +101,10 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) throw new Error('Not authenticated')
 
-            // Fetch Profile for direct post check
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('role, can_post_direct')
-                .eq('id', user.id)
-                .single();
-
-            // Force pending if contributor tries to publish, or use can_post_direct logic
-            const updatedStatus = (profile?.role === 'admin' && profile?.can_post_direct) ? finalStatus : (finalStatus === 'published' ? 'pending' : finalStatus);
+            // Admins can publish directly, contributors must have can_post_direct flag
+            const updatedStatus = (profile?.role === 'admin' || profile?.can_post_direct)
+                ? finalStatus
+                : (finalStatus === 'published' ? 'pending' : finalStatus);
 
             const { error } = await supabase
                 .from('posts')
@@ -168,13 +166,24 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
                             Save as Draft
                         </button>
 
+                        {profile?.role === 'admin' && (
+                            <button
+                                onClick={() => handleSave('published')}
+                                disabled={saving}
+                                className="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-500 flex items-center gap-2"
+                            >
+                                {saving ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
+                                Publish Post
+                            </button>
+                        )}
+
                         <button
                             onClick={() => handleSave('pending')}
                             disabled={saving}
                             className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 flex items-center gap-2"
                         >
                             {saving ? <Loader2 size={16} className="animate-spin" /> : <UploadCloud size={16} />}
-                            Submit Changes
+                            {profile?.role === 'admin' ? 'Save as Pending' : 'Submit Changes'}
                         </button>
                     </div>
                 </div>
