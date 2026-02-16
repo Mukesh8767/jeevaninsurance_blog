@@ -102,9 +102,9 @@ export default function EditPostPage({ params: paramsPromise }: { params: Promis
             if (!user) throw new Error('Not authenticated')
 
             // Admins can publish directly, contributors must have can_post_direct flag
-            const updatedStatus = (profile?.role === 'admin' || profile?.can_post_direct)
-                ? finalStatus
-                : (finalStatus === 'published' ? 'pending' : finalStatus);
+            const updatedStatus = profile?.role === 'admin' 
+                ? finalStatus 
+                : (profile?.can_post_direct ? finalStatus : (finalStatus === 'published' ? 'pending' : finalStatus));
 
             const { error } = await supabase
                 .from('posts')

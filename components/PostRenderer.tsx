@@ -36,16 +36,22 @@ export default function PostRenderer({ blocks }: { blocks: any[] }) {
                         );
                     }
 
-                    case 'paragraph':
+                    case 'paragraph': {
+                        const paragraphProps = {
+                            key: id,
+                            className: "text-slate-600 leading-relaxed text-lg font-light blog-paragraph",
+                            style: {
+                                fontSize: style?.fontSize || '1.125rem',
+                                lineHeight: style?.lineHeight || '1.8'
+                            }
+                        };
+
+                        if (data.html) {
+                            return <p {...paragraphProps} dangerouslySetInnerHTML={{ __html: data.html }} />;
+                        }
+
                         return (
-                            <p
-                                key={id}
-                                className="text-slate-600 leading-relaxed text-lg font-light"
-                                style={{
-                                    fontSize: style?.fontSize || '1.125rem',
-                                    lineHeight: style?.lineHeight || '1.8'
-                                }}
-                            >
+                            <p {...paragraphProps}>
                                 {data.text.map((span: TextSpan, idx: number) => (
                                     <span
                                         key={idx}
@@ -57,6 +63,9 @@ export default function PostRenderer({ blocks }: { blocks: any[] }) {
                                 ))}
                             </p>
                         );
+                    }
+
+
 
                     case 'image':
                         return (

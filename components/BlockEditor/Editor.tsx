@@ -5,8 +5,8 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableBlock } from './SortableBlock';
 import { SlashMenu } from './SlashMenu';
-import { Toolbar } from './Toolbar';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 
 export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; onChange: (blocks: any[]) => void }) {
     const [slashMenu, setSlashMenu] = useState<{ open: boolean; pos: { top: number; left: number }; blockId: string | null }>({
@@ -89,7 +89,7 @@ export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; 
     };
 
     return (
-        <div className="relative min-h-[400px]">
+        <div className="relative min-h-[500px] pb-32">
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -115,12 +115,27 @@ export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; 
                 </SortableContext>
             </DndContext>
 
+            {/* Premium Add More Button */}
+            <div className="mt-8 flex justify-center">
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => addBlock('paragraph')}
+                    className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-full shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:shadow-md transition-all font-medium group"
+                >
+                    <div className="p-1 bg-slate-100 rounded-full group-hover:bg-blue-50 transition-colors">
+                        <Plus size={16} />
+                    </div>
+                    Add content to your post
+                </motion.button>
+            </div>
+
             {blocks.length === 0 && (
                 <div
-                    className="py-10 text-slate-300 cursor-text"
+                    className="py-20 text-center border-2 border-dashed border-slate-100 rounded-2xl text-slate-400 cursor-text hover:bg-slate-50 transition-colors"
                     onClick={() => addBlock('paragraph')}
                 >
-                    Click to start writing...
+                    <p className="text-lg font-medium">Click here to start writing your masterpiece...</p>
                 </div>
             )}
 
@@ -131,9 +146,73 @@ export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; 
                         onClose={() => setSlashMenu({ ...slashMenu, open: false })}
                         onSelect={(type) => {
                             if (slashMenu.blockId) {
-                                // If we trigger slash in an empty paragraph, we might want to replace it
-                                // but for now let's just add after.
-                                addBlock(type, slashMenu.blockId);
+                                // Find the block that triggered the menu
+                                const triggerBlock = blocks.find(b => b.id === slashMenu.blockId);
+
+                                // Check if the block is essentially empty (just has the slash)
+                                const isSlashOnly = triggerBlock?.type === 'paragraph' &&
+                                    triggerBlock.data.text.length === 1 &&
+                                    (triggerBlock.data.text[0].text === '/' || triggerBlock.data.text[0].text === '');
+
+                                if (isSlashOnly) {
+                                    // Replace the current block with the new one
+                                    const id = `b-${Math.random().toString(36).substr(2, 9)}`;
+                                    let newBlock: any;
+
+                                    if (type.startsWith('heading')) {
+                                        newBlock = {
+                                            id,
+                                            type: 'heading',
+                                            data: { text: '' },
+                                            style: { level: type === 'heading-2' ? 2 : 1, color: '#1f2937' }
+                                        };
+                                    } else if (type === 'image') {
+                                        newBlock = {
+                                            id,
+                                            type: 'image',
+                                            data: { url: '', caption: '' },
+                                            style: { width: '100%', borderRadius: '12px' }
+                                        };
+                                    } else if (type === 'video') {
+                                        newBlock = {
+                                            id,
+                                            type: 'video',
+                                            data: { url: '', caption: '' },
+                                            style: { width: '100%', borderRadius: '12px' }
+                                        };
+                                    } else {
+                                        newBlock = {
+                                            id,
+                                            type: 'paragraph',
+                                            data: { text: [{ text: '' }] },
+                                            style: { fontSize: '16px', lineHeight: '1.7' }
+                                        };
+                                    }
+
+                                    const newBlocks = blocks.map(b => b.id === slashMenu.blockId ? newBlock : b);
+                                    onChange(newBlocks);
+                                    setSlashMenu({ open: false, pos: { top: 0, left: 0 }, blockId: null });
+                                } else {
+                                    // Remove the slash from the trigger block
+                                    if (triggerBlock?.type === 'paragraph') {
+                                        const updatedText = triggerBlock.data.text.map((s: any) => ({
+                                            ...s,
+                                            text: s.text.endsWith('/') ? s.text.slice(0, -1) : s.text
+                                        }));
+
+                                        // Also remove from HTML if it exists
+                                        let updatedHtml = triggerBlock.data.html;
+                                        if (updatedHtml && updatedHtml.endsWith('/')) {
+                                            updatedHtml = updatedHtml.slice(0, -1);
+                                        } else if (updatedHtml && updatedHtml.endsWith('/<br>')) {
+                                            updatedHtml = updatedHtml.replace(/\/ <br>$/, '').replace(/\/<br>$/, '');
+                                        }
+
+                                        updateBlock(triggerBlock.id, { text: updatedText, html: updatedHtml }, triggerBlock.style);
+                                    }
+                                    addBlock(type, slashMenu.blockId);
+                                }
+
                             }
                         }}
                     />
