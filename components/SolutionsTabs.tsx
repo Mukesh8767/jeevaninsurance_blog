@@ -145,7 +145,7 @@ export default function SolutionsTabs() {
     const [activeTab, setActiveTab] = useState<TabId>('health');
 
     return (
-        <section id="solutions" className="py-16 lg:py-32 bg-[#FBFBFD] relative overflow-hidden">
+        <section id="solutions" className="py-12 lg:py-16 bg-[#FBFBFD] relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
 
             <div className="container mx-auto px-6 lg:px-12 relative z-10">

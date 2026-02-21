@@ -17,7 +17,7 @@ const miniServices = [
 
 export default function QuickLeadSection() {
     return (
-        <section className="py-16 lg:py-24 bg-white relative overflow-hidden">
+        <section className="pt-8 lg:pt-12 pb-16 lg:pb-24 bg-white relative overflow-hidden">
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50 -z-10 skew-x-6 translate-x-12" />
 

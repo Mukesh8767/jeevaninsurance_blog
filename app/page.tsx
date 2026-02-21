@@ -9,22 +9,22 @@ import { IMAGES } from '@/lib/assets';
 import FeatureHighlights from '@/components/FeatureHighlights';
 import FAQ from '@/components/FAQ';
 import AboutTabs from '@/components/AboutTabs';
-import QuickLeadSection from '@/components/QuickLeadSection';
+import IntelligentProtection from '@/components/IntelligentProtection';
 import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
-      <QuickLeadSection />
-      <FeatureHighlights />
       <SolutionsTabs />
+      {/* <IntelligentProtection /> */}
+      <FeatureHighlights />
       <AboutTabs />
       {/* FAQ Section */}
       <FAQ />
 
       {/* Engagement Contact Info */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-16 bg-slate-50">
         <div className="container mx-auto px-6 lg:px-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -61,7 +61,7 @@ export default function Home() {
       </section>
 
       {/* Principles Section */}
-      <section className="py-32 bg-slate-900 text-white relative overflow-hidden">
+      <section className="py-20 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 grayscale brightness-200">
           <CategoryVisual type="comfort" className="w-full h-full rounded-none" animate={true} />
         </div>
@@ -124,7 +124,7 @@ export default function Home() {
       </section>
 
       {/* Insights Section - Thought Leadership */}
-      <section className="py-32 bg-white">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
             <div className='max-w-2xl'>
