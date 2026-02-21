@@ -12,18 +12,38 @@ interface ToolbarProps {
 
 const COLORS = [
     { label: 'Default', value: 'inherit' },
-    { label: 'Gray', value: '#64748b' },
+    { label: 'Slate', value: '#64748b' },
     { label: 'Red', value: '#ef4444' },
     { label: 'Blue', value: '#3b82f6' },
     { label: 'Green', value: '#22c55e' },
     { label: 'Purple', value: '#a855f7' },
     { label: 'Orange', value: '#f97316' },
+    { label: 'Teal', value: '#14b8a6' },
+    { label: 'Rose', value: '#f43f5e' },
+    { label: 'Indigo', value: '#6366f1' },
+    { label: 'Black', value: '#0f172a' },
 ];
 
 const FONTS = [
-    { label: 'Sans', value: 'var(--font-inter, sans-serif)' },
-    { label: 'Serif', value: 'Georgia, serif' },
-    { label: 'Mono', value: 'monospace' },
+    { label: 'Inter', value: 'var(--font-inter, sans-serif)' },
+    { label: 'Playfair', value: 'var(--font-playfair, serif)' },
+    { label: 'Montserrat', value: 'var(--font-montserrat, sans-serif)' },
+    { label: 'Roboto', value: 'var(--font-roboto, sans-serif)' },
+    { label: 'Lora', value: 'var(--font-lora, serif)' },
+    { label: 'Oswald', value: 'var(--font-oswald, sans-serif)' },
+    { label: 'Merriweather', value: 'var(--font-merriweather, serif)' },
+    { label: 'Ubuntu', value: 'var(--font-ubuntu, sans-serif)' },
+    { label: 'Quicksand', value: 'var(--font-quicksand, sans-serif)' },
+    { label: 'Space Mono', value: 'monospace' },
+];
+
+const FONT_SIZES = [
+    { label: 'Small', value: '14px' },
+    { label: 'Medium', value: '17px' },
+    { label: 'Large', value: '20px' },
+    { label: 'XL', value: '24px' },
+    { label: '2XL', value: '32px' },
+    { label: '3XL', value: '40px' },
 ];
 
 export function Toolbar({ onFormat, position, isVisible }: ToolbarProps) {
@@ -67,13 +87,13 @@ export function Toolbar({ onFormat, position, isVisible }: ToolbarProps) {
 
                     <div className="w-[1px] h-6 bg-slate-700 mx-1" />
 
-                    <div className="flex gap-1">
-                        {COLORS.slice(1, 6).map(color => (
+                    <div className="flex gap-1 max-w-[150px] flex-wrap">
+                        {COLORS.slice(1).map(color => (
                             <button
                                 key={color.value}
                                 onClick={() => onFormat('color', color.value)}
                                 style={{ backgroundColor: color.value }}
-                                className="w-5 h-5 rounded-full border border-white/20 hover:scale-125 transition-transform"
+                                className="w-5 h-5 rounded-full border border-white/20 hover:scale-125 transition-transform shrink-0"
                                 title={color.label}
                             />
                         ))}
@@ -83,10 +103,23 @@ export function Toolbar({ onFormat, position, isVisible }: ToolbarProps) {
 
                     <select
                         onChange={(e) => onFormat('fontFamily', e.target.value)}
-                        className="bg-transparent text-white text-xs border-none focus:ring-0 cursor-pointer hover:bg-slate-700/50 rounded px-1 transition-colors"
+                        className="bg-transparent text-white text-[10px] border-none focus:ring-0 cursor-pointer hover:bg-slate-700/50 rounded px-1 transition-colors w-24"
                     >
+                        <option value="" className="bg-slate-800 text-white">Font</option>
                         {FONTS.map(f => (
                             <option key={f.value} value={f.value} className="bg-slate-800 text-white">{f.label}</option>
+                        ))}
+                    </select>
+
+                    <div className="w-[1px] h-6 bg-slate-700 mx-1" />
+
+                    <select
+                        onChange={(e) => onFormat('fontSize', e.target.value)}
+                        className="bg-transparent text-white text-[10px] border-none focus:ring-0 cursor-pointer hover:bg-slate-700/50 rounded px-1 transition-colors w-16"
+                    >
+                        <option value="" className="bg-slate-800 text-white">Size</option>
+                        {FONT_SIZES.map(s => (
+                            <option key={s.value} value={s.value} className="bg-slate-800 text-white">{s.label}</option>
                         ))}
                     </select>
 

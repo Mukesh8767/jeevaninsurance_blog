@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabaseClient';
-import { LayoutDashboard, FileText, Users, Mail, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Mail, LogOut, Menu, X, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 
@@ -54,11 +54,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.push('/admin/login');
     };
 
-    // Filter links based on role
-    const filteredLinks = sidebarLinks.filter(link => {
+    // Filter links based on role visibility
+    const visibleLinks = sidebarLinks.filter(link => {
         if (profile?.role === 'admin') return true;
-        // Contributors see Dashboard and Posts
-        return link.href === '/admin' || link.href === '/admin/posts';
+        // Contributors see Dashboard, Posts, and Users (Users will be disabled)
+        return link.href === '/admin' || link.href === '/admin/posts' || link.href === '/admin/users';
     });
 
     // Handle redirection for restricted routes
@@ -131,22 +131,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </div>
 
                 <nav className="flex-1 p-4 space-y-1">
-                    {filteredLinks.map(link => {
+                    {visibleLinks.map(link => {
                         const Icon = link.icon;
                         const isActive = pathname === link.href;
+                        const isDisabled = profile?.role !== 'admin' && (link.href === '/admin/users' || link.href === '/admin/contacts');
+
                         return (
                             <Link
                                 key={link.href}
-                                href={link.href}
+                                href={isDisabled ? '#' : link.href}
+                                onClick={(e) => {
+                                    if (isDisabled) {
+                                        e.preventDefault();
+                                        alert('Access Denied: Only administrators can manage users.');
+                                    }
+                                }}
                                 className={cn(
-                                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
+                                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all cursor-pointer",
                                     isActive
                                         ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                        : isDisabled
+                                            ? "text-slate-300 cursor-not-allowed opacity-50 gray-grayscale"
+                                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                                 )}
                             >
                                 <Icon size={18} />
                                 {link.label}
+                                {isDisabled && (
+                                    <Shield size={12} className="ml-auto text-slate-300" />
+                                )}
                             </Link>
                         );
                     })}

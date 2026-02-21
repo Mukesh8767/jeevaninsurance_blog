@@ -78,6 +78,7 @@ export default function PostsPage() {
                         <tr>
                             <th className="px-6 py-4 font-semibold text-slate-600 text-sm">Title</th>
                             <th className="px-6 py-4 font-semibold text-slate-600 text-sm">Category / Subcategory</th>
+                            <th className="px-6 py-4 font-semibold text-slate-600 text-sm">Type</th>
                             <th className="px-6 py-4 font-semibold text-slate-600 text-sm">Status</th>
                             <th className="px-6 py-4 font-semibold text-slate-600 text-sm">Actions</th>
                         </tr>
@@ -102,6 +103,13 @@ export default function PostsPage() {
                                                 <span className="text-xs text-slate-400">{post.subcategories.title}</span>
                                             )}
                                         </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-slate-600 font-medium">
+                                        <span className={cn("px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest",
+                                            post.post_type === 'news' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-blue-100 text-blue-700 border border-blue-200'
+                                        )}>
+                                            {post.post_type || 'blog'}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={cn("px-2 py-1 rounded-full text-xs font-semibold uppercase",

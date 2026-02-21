@@ -101,6 +101,17 @@ export function ParagraphBlock({ data, style, onChange, onEnter, onDeleteIfEmpty
             case 'fontFamily':
                 document.execCommand('fontName', false, value);
                 break;
+            case 'fontSize':
+                // execCommand('fontSize') is weird (1-7), so we use style directly on selection if possible
+                // but for simplicity with contentEditable we'll try to wrap in a span
+                const selection = window.getSelection();
+                if (selection && selection.rangeCount > 0) {
+                    const range = selection.getRangeAt(0);
+                    const span = document.createElement('span');
+                    span.style.fontSize = value;
+                    range.surroundContents(span);
+                }
+                break;
             case 'clear':
                 document.execCommand('removeFormat', false);
                 break;
