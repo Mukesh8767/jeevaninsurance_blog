@@ -1,11 +1,20 @@
 'use client';
 
+import { useState, useCallback } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { SortableBlock } from './SortableBlock';
-import { Plus, Type, Image as ImageIcon, Quote as QuoteIcon, Hash } from 'lucide-react';
+import { SlashMenu } from './SlashMenu';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 
 export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; onChange: (blocks: any[]) => void }) {
+    const [slashMenu, setSlashMenu] = useState<{ open: boolean; pos: { top: number; left: number }; blockId: string | null }>({
+        open: false,
+        pos: { top: 0, left: 0 },
+        blockId: null
+    });
+
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor)
@@ -13,47 +22,74 @@ export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; 
 
     const handleDragEnd = (event: any) => {
         const { active, over } = event;
-        if (active.id !== over.id) {
+        if (active && over && active.id !== over.id) {
             const oldIndex = blocks.findIndex((b) => b.id === active.id);
             const newIndex = blocks.findIndex((b) => b.id === over.id);
             onChange(arrayMove(blocks, oldIndex, newIndex));
         }
     };
 
-    const addBlock = (type: string) => {
-        const newBlock = {
-            id: crypto.randomUUID(),
-            type,
-            props: type === 'image' ? { url: '' } : { text: '' },
-        };
-        onChange([...blocks, newBlock]);
-    };
+    const addBlock = useCallback((type: string, afterId?: string) => {
+        const id = `b-${Math.random().toString(36).substr(2, 9)}`;
+        let newBlock: any;
 
-    const updateBlock = (id: string, newProps: any) => {
-        onChange(blocks.map(b => b.id === id ? { ...b, props: newProps } : b));
+        if (type.startsWith('heading')) {
+            newBlock = {
+                id,
+                type: 'heading',
+                data: { text: '' },
+                style: { level: type === 'heading-2' ? 2 : 1, color: '#1f2937' }
+            };
+        } else if (type === 'image') {
+            newBlock = {
+                id,
+                type: 'image',
+                data: { url: '', caption: '' },
+                style: { width: '100%', borderRadius: '12px' }
+            };
+        } else if (type === 'video') {
+            newBlock = {
+                id,
+                type: 'video',
+                data: { url: '', caption: '' },
+                style: { width: '100%', borderRadius: '12px' }
+            };
+        } else {
+            newBlock = {
+                id,
+                type: 'paragraph',
+                data: { text: [{ text: '' }] },
+                style: { fontSize: '16px', lineHeight: '1.7' }
+            };
+        }
+
+        if (afterId) {
+            const index = blocks.findIndex(b => b.id === afterId);
+            const newBlocks = [...blocks];
+            newBlocks.splice(index + 1, 0, newBlock);
+            onChange(newBlocks);
+        } else {
+            onChange([...blocks, newBlock]);
+        }
+
+        setSlashMenu({ open: false, pos: { top: 0, left: 0 }, blockId: null });
+    }, [blocks, onChange]);
+
+    const updateBlock = (id: string, data: any, style: any) => {
+        onChange(blocks.map(b => b.id === id ? { ...b, data, style } : b));
     };
 
     const removeBlock = (id: string) => {
+        if (blocks.length <= 1) {
+            // Reset last block instead of deleting if it's the only one
+            updateBlock(id, { text: [{ text: '' }] }, { fontSize: '16px', lineHeight: '1.7' });
+            return;
+        }
         onChange(blocks.filter(b => b.id !== id));
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <div className="mb-6 flex gap-2 p-2 bg-slate-100 rounded-lg justify-center sticky top-20 z-10 w-fit mx-auto shadow-sm">
-                <button onClick={() => addBlock('heading')} className="p-2 hover:bg-white rounded text-slate-600 tooltip" title="Heading">
-                    <Hash size={20} />
-                </button>
-                <button onClick={() => addBlock('paragraph')} className="p-2 hover:bg-white rounded text-slate-600" title="Paragraph">
-                    <Type size={20} />
-                </button>
-                <button onClick={() => addBlock('quote')} className="p-2 hover:bg-white rounded text-slate-600" title="Quote">
-                    <QuoteIcon size={20} />
-                </button>
-                <button onClick={() => addBlock('image')} className="p-2 hover:bg-white rounded text-slate-600" title="Image">
-                    <ImageIcon size={20} />
-                </button>
-            </div>
-
+        <div className="relative min-h-[500px] pb-32">
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -71,17 +107,117 @@ export default function BlockEditor({ blocks = [], onChange }: { blocks: any[]; 
                                 block={block}
                                 updateBlock={updateBlock}
                                 removeBlock={removeBlock}
+                                onEnter={() => addBlock('paragraph', block.id)}
+                                triggerSlash={(pos: any) => setSlashMenu({ open: true, pos, blockId: block.id })}
                             />
                         ))}
                     </div>
                 </SortableContext>
             </DndContext>
 
+            {/* Premium Add More Button */}
+            <div className="mt-8 flex justify-center">
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => addBlock('paragraph')}
+                    className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 rounded-full shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:shadow-md transition-all font-medium group"
+                >
+                    <div className="p-1 bg-slate-100 rounded-full group-hover:bg-blue-50 transition-colors">
+                        <Plus size={16} />
+                    </div>
+                    Add content to your post
+                </motion.button>
+            </div>
+
             {blocks.length === 0 && (
-                <div className="text-center py-20 border-2 border-dashed border-slate-200 rounded-xl">
-                    <p className="text-slate-400">Start by adding a block from the toolbar above.</p>
+                <div
+                    className="py-20 text-center border-2 border-dashed border-slate-100 rounded-2xl text-slate-400 cursor-text hover:bg-slate-50 transition-colors"
+                    onClick={() => addBlock('paragraph')}
+                >
+                    <p className="text-lg font-medium">Click here to start writing your masterpiece...</p>
                 </div>
             )}
+
+            <AnimatePresence>
+                {slashMenu.open && (
+                    <SlashMenu
+                        position={slashMenu.pos}
+                        onClose={() => setSlashMenu({ ...slashMenu, open: false })}
+                        onSelect={(type) => {
+                            if (slashMenu.blockId) {
+                                // Find the block that triggered the menu
+                                const triggerBlock = blocks.find(b => b.id === slashMenu.blockId);
+
+                                // Check if the block is essentially empty (just has the slash)
+                                const isSlashOnly = triggerBlock?.type === 'paragraph' &&
+                                    triggerBlock.data.text.length === 1 &&
+                                    (triggerBlock.data.text[0].text === '/' || triggerBlock.data.text[0].text === '');
+
+                                if (isSlashOnly) {
+                                    // Replace the current block with the new one
+                                    const id = `b-${Math.random().toString(36).substr(2, 9)}`;
+                                    let newBlock: any;
+
+                                    if (type.startsWith('heading')) {
+                                        newBlock = {
+                                            id,
+                                            type: 'heading',
+                                            data: { text: '' },
+                                            style: { level: type === 'heading-2' ? 2 : 1, color: '#1f2937' }
+                                        };
+                                    } else if (type === 'image') {
+                                        newBlock = {
+                                            id,
+                                            type: 'image',
+                                            data: { url: '', caption: '' },
+                                            style: { width: '100%', borderRadius: '12px' }
+                                        };
+                                    } else if (type === 'video') {
+                                        newBlock = {
+                                            id,
+                                            type: 'video',
+                                            data: { url: '', caption: '' },
+                                            style: { width: '100%', borderRadius: '12px' }
+                                        };
+                                    } else {
+                                        newBlock = {
+                                            id,
+                                            type: 'paragraph',
+                                            data: { text: [{ text: '' }] },
+                                            style: { fontSize: '16px', lineHeight: '1.7' }
+                                        };
+                                    }
+
+                                    const newBlocks = blocks.map(b => b.id === slashMenu.blockId ? newBlock : b);
+                                    onChange(newBlocks);
+                                    setSlashMenu({ open: false, pos: { top: 0, left: 0 }, blockId: null });
+                                } else {
+                                    // Remove the slash from the trigger block
+                                    if (triggerBlock?.type === 'paragraph') {
+                                        const updatedText = triggerBlock.data.text.map((s: any) => ({
+                                            ...s,
+                                            text: s.text.endsWith('/') ? s.text.slice(0, -1) : s.text
+                                        }));
+
+                                        // Also remove from HTML if it exists
+                                        let updatedHtml = triggerBlock.data.html;
+                                        if (updatedHtml && updatedHtml.endsWith('/')) {
+                                            updatedHtml = updatedHtml.slice(0, -1);
+                                        } else if (updatedHtml && updatedHtml.endsWith('/<br>')) {
+                                            updatedHtml = updatedHtml.replace(/\/ <br>$/, '').replace(/\/<br>$/, '');
+                                        }
+
+                                        updateBlock(triggerBlock.id, { text: updatedText, html: updatedHtml }, triggerBlock.style);
+                                    }
+                                    addBlock(type, slashMenu.blockId);
+                                }
+
+                            }
+                        }}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }

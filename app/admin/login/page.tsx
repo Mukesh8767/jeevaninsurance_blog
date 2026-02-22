@@ -18,7 +18,7 @@ export default function AdminLogin() {
         try {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw error;
-            router.push('/admin');
+            router.push('/admin/posts');
         } catch (error: any) {
             alert(error.message || 'Login failed');
         } finally {

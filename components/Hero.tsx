@@ -1,3 +1,5 @@
+'use client';
+
 import PremiumHeroVisual from './PremiumHeroVisual';
 import ContactForm from './ContactForm';
 import { motion } from 'framer-motion';

@@ -38,3 +38,10 @@
 ## 7. Edge Functions
 **Decision:** Supabase Edge Functions (Deno/TypeScript).
 **Justification:** Mandatory for secure operations (sending emails, admin user creation) to avoid exposing `service_role` key in the client.
+
+## 8. Middleware to Proxy Transition
+**Decision:** Migrated `middleware.ts` to `proxy.ts`.
+**Justification:**
+- Next.js 16+ has deprecated the `middleware.ts` convention in favor of `proxy.ts` to better reflect its role as a network boundary and address security vulnerabilities (CVE-2025-29927).
+- Renamed the exported function from `middleware` to `proxy` to align with the new framework standard.
+

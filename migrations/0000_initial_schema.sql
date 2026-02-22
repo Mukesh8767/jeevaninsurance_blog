@@ -76,9 +76,13 @@ create policy "Authors can insert posts" on public.posts for insert with check (
 create policy "Authors can update own posts" on public.posts for update using (auth.uid() = author_id);
 create policy "Admins can update any post" on public.posts for update using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
 
+create policy "Authors can delete own posts" on public.posts for delete using (auth.uid() = author_id);
+create policy "Admins can delete any post" on public.posts for delete using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+
 -- Contact Requests
 create policy "Anyone can create contact request" on public.contact_requests for insert with check (true);
 create policy "Only admins can view contact requests" on public.contact_requests for select using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
+create policy "Only admins can delete contact requests" on public.contact_requests for delete using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
 
 -- STORAGE (If using Supabase Storage)
 insert into storage.buckets (id, name, public) values ('public-media', 'public-media', true) on conflict do nothing;
