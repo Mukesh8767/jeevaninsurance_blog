@@ -44,7 +44,6 @@ export default function PostRenderer({ blocks }: { blocks: any[] }) {
 
                     case 'paragraph': {
                         const paragraphProps = {
-                            key: id,
                             className: "text-slate-600 leading-[1.9] text-xl font-light mb-8 blog-paragraph antialiased",
                             style: {
                                 fontSize: style?.fontSize || '1.25rem',
@@ -54,11 +53,11 @@ export default function PostRenderer({ blocks }: { blocks: any[] }) {
                         };
 
                         if (data.html) {
-                            return <p {...paragraphProps} dangerouslySetInnerHTML={{ __html: data.html }} />;
+                            return <p key={id} {...paragraphProps} dangerouslySetInnerHTML={{ __html: data.html }} />;
                         }
 
                         return (
-                            <p {...paragraphProps}>
+                            <p key={id} {...paragraphProps}>
                                 {data.text.map((span: TextSpan, idx: number) => (
                                     <span
                                         key={idx}
