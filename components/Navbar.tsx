@@ -21,12 +21,14 @@ const WhatsAppIcon = ({ className, size = 24 }: { className?: string; size?: num
     </svg>
 );
 
-const links = [
+import { createClient } from '@/lib/supabaseClient';
+
+const defaultLinks = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/category/life-insurance', label: 'Life', icon: Heart },
-    { href: '/category/health-insurance', label: 'Health', icon: Activity },
-    { href: '/category/motor-insurance', label: 'Motor', icon: Car },
-    { href: '/category/mutual-funds-sip', label: 'Investments', icon: TrendingUp },
+    { href: '/category/life', label: 'Life', icon: Heart },
+    { href: '/category/health', label: 'Health', icon: Activity },
+    { href: '/category/motor', label: 'Motor', icon: Car },
+    { href: '/category/mutual-fund', label: 'Investments', icon: TrendingUp },
     {
         href: '/terms',
         label: 'Terms',
@@ -46,8 +48,66 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
     const [showWhatsAppHint, setShowWhatsAppHint] = useState(false);
+    const [links, setLinks] = useState(defaultLinks);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith('/admin');
+
+    // Fetch dynamic subcategories
+    useEffect(() => {
+        const fetchNavData = async () => {
+            const supabase = createClient();
+            const { data: cats } = await supabase
+                .from('categories')
+                .select('*, subcategories(*)');
+
+            if (cats) {
+                const updatedLinks = defaultLinks.map(link => {
+                    // Find matching category in DB
+                    const categorySlug = link.href.split('/').pop();
+                    const dbCat = cats.find(c => c.slug === categorySlug);
+
+                    if (dbCat && dbCat.subcategories && dbCat.subcategories.length > 0) {
+                        return {
+                            ...link,
+                            subItems: [
+                                {
+                                    href: link.href,
+                                    label: `View All ${link.label}`,
+                                    icon: link.icon
+                                },
+                                ...dbCat.subcategories.map((sub: any) => ({
+                                    href: `/category/${sub.slug}`,
+                                    label: sub.title,
+                                    icon: link.icon
+                                }))
+                            ]
+                        };
+                    }
+                    return link;
+                });
+                setLinks(updatedLinks);
+            }
+        };
+        fetchNavData();
+    }, []);
+
+    // Handle click outside to close dropdown
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (activeDropdown && !(event.target as Element).closest('.nav-dropdown-trigger')) {
+                setActiveDropdown(null);
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [activeDropdown]);
+
+    // Close dropdown on navigation
+    useEffect(() => {
+        setActiveDropdown(null);
+        setIsOpen(false);
+    }, [pathname]);
 
     // Handle scroll lock when mobile menu is open
     useEffect(() => {
@@ -104,63 +164,71 @@ export default function Navbar() {
                         {/* Desktop Menu */}
                         <div className="hidden lg:flex items-center gap-6 xl:gap-8">
                             {links.map(link => (
-                                <div key={link.href} className="relative group py-2">
+                                <div key={link.href} className="relative py-2 nav-dropdown-trigger">
                                     {link.subItems ? (
                                         <>
-                                            <button className="flex items-center gap-2 cursor-pointer outline-none">
+                                            <button
+                                                onClick={() => setActiveDropdown(activeDropdown === link.label ? null : link.label)}
+                                                className="flex items-center gap-2 cursor-pointer outline-none group"
+                                            >
                                                 <link.icon size={16} className={cn(
                                                     "transition-colors duration-300",
-                                                    pathname?.startsWith(link.href) ? "text-primary" : "text-slate-400 group-hover:text-primary"
+                                                    (pathname?.startsWith(link.href) || activeDropdown === link.label) ? "text-primary" : "text-slate-400 group-hover:text-primary"
                                                 )} />
                                                 <span className={cn(
                                                     "text-sm font-medium transition-all duration-300",
-                                                    pathname?.startsWith(link.href) ? "text-primary" : "text-slate-500 group-hover:text-primary"
+                                                    (pathname?.startsWith(link.href) || activeDropdown === link.label) ? "text-primary" : "text-slate-500 group-hover:text-primary"
                                                 )}>
                                                     {link.label}
                                                 </span>
                                                 <ChevronDown size={14} className={cn(
-                                                    "transition-transform duration-300 text-slate-400 group-hover:text-primary group-hover:rotate-180",
+                                                    "transition-transform duration-300 text-slate-400 group-hover:text-primary",
+                                                    activeDropdown === link.label && "rotate-180 text-primary",
                                                     pathname?.startsWith(link.href) && "text-primary"
                                                 )} />
                                             </button>
 
                                             {/* Dropdown Menu */}
-                                            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                                                <motion.div
-                                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                    whileHover={{ opacity: 1, y: 0, scale: 1 }}
-                                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                    className="w-64 bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-2xl p-2"
-                                                >
-                                                    <div className="grid gap-1">
-                                                        {link.subItems.map((subItem) => (
-                                                            <Link
-                                                                key={subItem.href}
-                                                                href={subItem.href}
-                                                                className={cn(
-                                                                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group/sub",
-                                                                    pathname === subItem.href
-                                                                        ? "bg-primary/5 text-primary"
-                                                                        : "hover:bg-slate-50 text-slate-600 hover:text-primary"
-                                                                )}
-                                                            >
-                                                                <div className={cn(
-                                                                    "w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-sm",
-                                                                    pathname === subItem.href ? "bg-primary text-white" : "bg-slate-100 text-slate-400 group-hover/sub:bg-primary/10 group-hover/sub:text-primary"
-                                                                )}>
-                                                                    <subItem.icon size={14} />
-                                                                </div>
-                                                                <span className="text-sm font-semibold tracking-tight">{subItem.label}</span>
-                                                            </Link>
-                                                        ))}
+                                            <AnimatePresence>
+                                                {activeDropdown === link.label && (
+                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50">
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                            className="w-64 bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-2xl p-2"
+                                                        >
+                                                            <div className="grid gap-1">
+                                                                {link.subItems.map((subItem) => (
+                                                                    <Link
+                                                                        key={subItem.href}
+                                                                        href={subItem.href}
+                                                                        className={cn(
+                                                                            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group/sub",
+                                                                            pathname === subItem.href
+                                                                                ? "bg-primary/5 text-primary"
+                                                                                : "hover:bg-slate-50 text-slate-600 hover:text-primary"
+                                                                        )}
+                                                                    >
+                                                                        <div className={cn(
+                                                                            "w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-sm",
+                                                                            pathname === subItem.href ? "bg-primary text-white" : "bg-slate-100 text-slate-400 group-hover/sub:bg-primary/10 group-hover/sub:text-primary"
+                                                                        )}>
+                                                                            <subItem.icon size={14} />
+                                                                        </div>
+                                                                        <span className="text-sm font-semibold tracking-tight">{subItem.label}</span>
+                                                                    </Link>
+                                                                ))}
+                                                            </div>
+                                                        </motion.div>
                                                     </div>
-                                                </motion.div>
-                                            </div>
+                                                )}
+                                            </AnimatePresence>
                                         </>
                                     ) : (
                                         <Link
                                             href={link.href}
-                                            className="flex items-center gap-2"
+                                            className="flex items-center gap-2 group relative"
                                         >
                                             <link.icon size={16} className={cn(
                                                 "transition-colors duration-300",
@@ -168,7 +236,7 @@ export default function Navbar() {
                                             )} />
                                             <span className={cn(
                                                 "text-sm font-medium transition-all duration-300",
-                                                pathname === link.href ? "text-primary" : "text-slate-500 group-hover:text-primary group-hover:tracking-wide"
+                                                pathname === link.href ? "text-primary" : "text-slate-500 group-hover:text-primary"
                                             )}>
                                                 {link.label}
                                             </span>

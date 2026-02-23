@@ -16,6 +16,7 @@ async function getLatestPosts() {
   const { data: posts, error } = await supabase
     .from('posts')
     .select('*, categories(*)')
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
     .limit(2);
 
@@ -25,6 +26,7 @@ async function getLatestPosts() {
     const { data: simplePosts } = await supabase
       .from('posts')
       .select('*')
+      .eq('status', 'published')
       .order('created_at', { ascending: false })
       .limit(2);
     return simplePosts || [];

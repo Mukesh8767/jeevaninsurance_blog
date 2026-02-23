@@ -8,13 +8,13 @@ import { cn } from '@/lib/utils';
 import SocialShare from '@/components/SocialShare';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
 
-// Helper to fetch data
 async function getPost(slug: string) {
     const supabase = await createClient();
     const { data: post } = await supabase
         .from('posts')
         .select('*, categories(title, slug), subcategories(title, slug), profiles(full_name)')
         .eq('slug', slug)
+        .eq('status', 'published')
         .single();
     return post;
 }

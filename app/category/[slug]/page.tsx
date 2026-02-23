@@ -6,7 +6,7 @@ import { IMAGES } from '@/lib/assets';
 
 // This would typically come from a database, but bridging for the layout demo
 const categoryData: Record<string, any> = {
-    'motor-insurance': {
+    'motor': {
         title: 'Motor Insurance',
         subtitle: 'Comprehensive protection for your vehicle against accidents, theft, and liabilities.',
         features: [
@@ -15,7 +15,7 @@ const categoryData: Record<string, any> = {
             { title: 'Cashless Garages', desc: 'Network of 5000+ garages for cashless repairs.' }
         ]
     },
-    'life-insurance': {
+    'life': {
         title: 'Life Insurance',
         subtitle: 'Secure your family’s financial future with our comprehensive life cover plans.',
         features: [
@@ -24,7 +24,7 @@ const categoryData: Record<string, any> = {
             { title: 'Critical Illness Cover', desc: 'Additional protection against major illnesses.' }
         ]
     },
-    'health-insurance': {
+    'health': {
         title: 'Health Insurance',
         subtitle: 'Medical security for you and your family against rising healthcare costs.',
         features: [
@@ -33,7 +33,7 @@ const categoryData: Record<string, any> = {
             { title: 'No Claim Bonus', desc: 'Increase in sum insured for every claim-free year.' }
         ]
     },
-    'mutual-funds-sip': {
+    'mutual-fund': {
         title: 'Mutual Funds & SIP',
         subtitle: 'Wealth creation strategies tailored to your risk appetite and time horizon.',
         features: [
@@ -105,10 +105,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 const getCategoryGradient = (slug: string) => {
     switch (slug) {
-        case 'health-insurance': return 'from-cyan-600 to-blue-700';
-        case 'life-insurance': return 'from-indigo-900 to-purple-800';
-        case 'motor-insurance': return 'from-slate-700 to-gray-800';
-        case 'mutual-funds-sip': return 'from-violet-600 to-indigo-700';
+        case 'health': return 'from-cyan-600 to-blue-700';
+        case 'life': return 'from-indigo-900 to-purple-800';
+        case 'motor': return 'from-slate-700 to-gray-800';
+        case 'mutual-fund': return 'from-violet-600 to-indigo-700';
         case 'nri-planning': return 'from-sky-600 to-blue-800';
         case 'retirement-planning': return 'from-emerald-600 to-teal-700';
         default: return 'from-slate-800 to-slate-900';
@@ -121,33 +121,63 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
     const supabase = await createClient();
 
-    // 1. Fetch Category from DB to ensure it exists and get ID
+    // 1. Fetch Category or Subcategory from DB
+    // We try to find if the slug belongs to a category or a subcategory
     const { data: dbCategory } = await supabase
         .from('categories')
         .select('*')
         .eq('slug', slug)
         .single();
 
-    if (!staticData && !dbCategory) {
+    let dbSubcategory = null;
+    let actualCategory = dbCategory;
+
+    if (!dbCategory) {
+        // If not a category, check if it's a subcategory
+        const { data: sub } = await supabase
+            .from('subcategories')
+            .select('*, categories(*)')
+            .eq('slug', slug)
+            .single();
+
+        if (sub) {
+            dbSubcategory = sub;
+            actualCategory = sub.categories;
+        }
+    }
+
+    if (!staticData && !actualCategory && !dbSubcategory) {
         notFound();
     }
 
-    const title = staticData?.title || dbCategory?.title;
-    const subtitle = staticData?.subtitle || `Expert insights and comprehensive guides on ${title}.`;
+    const title = dbSubcategory ? dbSubcategory.title : (actualCategory?.title || staticData?.title);
+    const subtitle = dbSubcategory
+        ? `Expert guides and insights for ${dbSubcategory.title} under ${actualCategory?.title}.`
+        : (staticData?.subtitle || `Expert insights and comprehensive guides on ${title}.`);
+
     const features = staticData?.features || [
         { title: 'Expert Analysis', desc: 'In-depth articles from industry veterans.' },
         { title: 'Latest Trends', desc: 'Stay updated with the changing landscape.' },
         { title: 'Practical Guides', desc: 'Step-by-step advice for your financial journey.' }
     ];
 
-    // 2. Fetch Posts for this Category
-    const { data: posts } = await supabase
+    // 2. Fetch Posts for this Category or Subcategory
+    let postsQuery = supabase
         .from('posts')
-        .select('*, profiles(full_name)')
-        .eq('category_id', dbCategory?.id)
-        .order('created_at', { ascending: false });
+        .select('*, profiles(full_name), categories(title, slug), subcategories(title, slug)')
+        .eq('status', 'published');
 
-    const bgGradient = getCategoryGradient(slug);
+    if (dbSubcategory) {
+        postsQuery = postsQuery.eq('subcategory_id', dbSubcategory.id);
+    } else if (actualCategory) {
+        postsQuery = postsQuery.eq('category_id', actualCategory.id);
+    }
+
+    const { data: posts } = await postsQuery.order('created_at', { ascending: false });
+
+    // For better UI, we might want to know the category gradient from the actual category
+    const categorySlugForGradient = actualCategory?.slug || slug;
+    const bgGradient = getCategoryGradient(categorySlugForGradient);
 
     return (
         <main className="min-h-screen bg-slate-50">
