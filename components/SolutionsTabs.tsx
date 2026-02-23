@@ -238,39 +238,47 @@ export default function SolutionsTabs() {
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -15 }}
-                            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6"
+                            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8"
                         >
                             {content[activeTab].map((item, idx) => {
                                 const Icon = item.icon;
                                 return (
                                     <Link
                                         key={item.title}
-                                        href={`/category/${activeTab}-insurance`}
-                                        className="group relative bg-white p-4 lg:p-6 rounded-2xl lg:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 flex flex-col h-full"
+                                        href={`/category/${activeTab}`}
+                                        className="group relative bg-white p-6 lg:p-8 rounded-[2.5rem] border border-slate-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] hover:border-secondary/20 transition-all duration-700 hover:-translate-y-2 flex flex-col h-full overflow-hidden"
                                     >
-                                        <div className="w-8 h-8 lg:w-12 lg:h-12 rounded-xl lg:rounded-2xl bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500 mb-3 lg:mb-6">
-                                            <Icon className="w-4 h-4 lg:w-6 lg:h-6" />
-                                        </div>
+                                        {/* Hover Glow Effect */}
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-                                        <h4 className="text-sm lg:text-lg font-bold text-primary mb-2 lg:mb-3 tracking-tight group-hover:text-secondary transition-colors line-clamp-1">
-                                            {item.title}
-                                        </h4>
-                                        <p className="text-slate-500 font-light text-[10px] lg:text-xs leading-relaxed mb-3 lg:mb-6 flex-1 line-clamp-3">
-                                            {item.desc}
-                                        </p>
+                                        <div className="relative z-10 flex flex-col h-full">
+                                            <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-slate-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-700 mb-6 lg:mb-8 shadow-sm group-hover:shadow-xl group-hover:shadow-primary/20">
+                                                <Icon className="w-6 h-6 lg:w-8 lg:h-8" />
+                                            </div>
 
-                                        <div className="flex flex-wrap gap-x-2 gap-y-1">
-                                            {item.features.slice(0, 2).map((feat: string, i: number) => (
-                                                <div key={i} className="flex items-center gap-1 text-[8px] lg:text-[9px] font-bold uppercase tracking-wider text-slate-300 group-hover:text-slate-400 transition-colors">
-                                                    <div className="w-0.5 h-0.5 lg:w-1 lg:h-1 bg-secondary rounded-full" />
-                                                    <span className="line-clamp-1">{feat}</span>
+                                            <h4 className="text-xl lg:text-2xl font-bold text-primary mb-3 tracking-tight group-hover:text-secondary transition-colors">
+                                                {item.title}
+                                            </h4>
+
+                                            <p className="text-slate-500 font-light text-sm lg:text-[15px] leading-relaxed mb-8 flex-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                                {item.desc}
+                                            </p>
+
+                                            <div className="flex flex-col gap-3.5 border-t border-slate-100 pt-8 mt-auto">
+                                                {item.features.slice(0, 3).map((feat: string, i: number) => (
+                                                    <div key={i} className="flex items-center gap-3 text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.1em] text-slate-400 group-hover:text-slate-600 transition-colors">
+                                                        <CheckCircle2 size={14} className="text-secondary shrink-0" />
+                                                        <span className="line-clamp-1">{feat}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <div className="absolute top-4 right-4 lg:top-8 lg:right-8 opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:translate-x-1">
+                                                <div className="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center">
+                                                    <ArrowRight size={18} className="text-secondary" />
                                                 </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="absolute top-4 right-4 lg:top-6 lg:right-6 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1">
-                                            <ArrowRight size={14} className="text-secondary" />
+                                            </div>
                                         </div>
                                     </Link>
                                 );

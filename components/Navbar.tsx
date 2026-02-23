@@ -6,6 +6,7 @@ import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, 
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import WhatsAppModal from './WhatsAppModal';
 
 const WhatsAppIcon = ({ className, size = 24 }: { className?: string; size?: number }) => (
     <svg
@@ -22,11 +23,10 @@ const WhatsAppIcon = ({ className, size = 24 }: { className?: string; size?: num
 
 const links = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/category/life', label: 'Life', icon: Heart },
-    { href: '/category/health', label: 'Health', icon: Activity },
-    { href: '/category/motor', label: 'Motor', icon: Car },
-    { href: '/category/mutual-fund', label: 'Investments', icon: TrendingUp },
-    { href: '/category/loans', label: 'Loans', icon: Landmark },
+    { href: '/category/life-insurance', label: 'Life', icon: Heart },
+    { href: '/category/health-insurance', label: 'Health', icon: Activity },
+    { href: '/category/motor-insurance', label: 'Motor', icon: Car },
+    { href: '/category/mutual-funds-sip', label: 'Investments', icon: TrendingUp },
     {
         href: '/terms',
         label: 'Terms',
@@ -44,6 +44,8 @@ const links = [
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [isWhatsAppModalOpen, setIsWhatsAppModalOpen] = useState(false);
+    const [showWhatsAppHint, setShowWhatsAppHint] = useState(false);
     const pathname = usePathname();
     const isAdmin = pathname?.startsWith('/admin');
 
@@ -63,7 +65,14 @@ export default function Navbar() {
             setScrolled(window.scrollY > 20);
         };
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+
+        // Show WhatsApp hint after 3 seconds
+        const timer = setTimeout(() => setShowWhatsAppHint(true), 3000);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            clearTimeout(timer);
+        };
     }, []);
 
     if (isAdmin) return null;
@@ -181,15 +190,13 @@ export default function Navbar() {
                                 >
                                     <Phone size={16} />
                                 </a>
-                                <a
-                                    href="https://wa.me/919588472632"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <button
+                                    onClick={() => setIsWhatsAppModalOpen(true)}
                                     className="hidden xl:inline-flex items-center gap-2 px-5 py-2 bg-[#25D366] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#128C7E] transition-all shadow-lg shadow-green-200 hover:-translate-y-0.5"
                                 >
                                     <WhatsAppIcon size={16} />
                                     WhatsApp
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -308,6 +315,18 @@ export default function Navbar() {
                                             </div>
                                             <span className="font-medium">Call Now</span>
                                         </a>
+                                        <button
+                                            onClick={() => {
+                                                setIsWhatsAppModalOpen(true);
+                                                setIsOpen(false);
+                                            }}
+                                            className="flex items-center gap-3 text-slate-600 hover:text-[#25D366] transition-colors w-full text-left"
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-[#25D366]">
+                                                <WhatsAppIcon size={16} />
+                                            </div>
+                                            <span className="font-medium">WhatsApp Consultation</span>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -323,19 +342,43 @@ export default function Navbar() {
             </AnimatePresence>
 
             {/* Floating Action Buttons */}
-            <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
-                <motion.a
-                    href="https://wa.me/919588472632"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="w-12 h-12 lg:w-14 lg:h-14 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-lg shadow-green-200 hover:shadow-green-300 transition-all"
-                >
-                    <WhatsAppIcon size={24} />
-                </motion.a>
+            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+                <div className="relative group">
+                    <AnimatePresence>
+                        {showWhatsAppHint && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 20, scale: 0.8 }}
+                                animate={{ opacity: 1, x: 0, scale: 1 }}
+                                exit={{ opacity: 0, x: 20, scale: 0.8 }}
+                                className="absolute right-[110%] top-1/2 -translate-y-1/2 whitespace-nowrap bg-white px-4 py-2 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3"
+                            >
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Expert Online</span>
+                                    <span className="text-sm font-bold text-primary leading-none">Get in touch</span>
+                                </div>
+                                <div className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <motion.button
+                        onClick={() => setIsWhatsAppModalOpen(true)}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="relative w-14 h-14 lg:w-16 lg:h-16 bg-[#25D366] rounded-full flex items-center justify-center text-white shadow-lg shadow-green-200 hover:shadow-green-300 transition-all cursor-pointer overflow-hidden border-4 border-white"
+                    >
+                        <img
+                            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
+                            alt="Expert Avatar"
+                            className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                        />
+                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-[#25D366] rounded-full border-2 border-white flex items-center justify-center z-10">
+                            <WhatsAppIcon size={10} />
+                        </div>
+                    </motion.button>
+                </div>
 
                 <motion.a
                     href="tel:+919588472632"
@@ -348,6 +391,11 @@ export default function Navbar() {
                     <Phone size={24} />
                 </motion.a>
             </div>
+
+            <WhatsAppModal
+                isOpen={isWhatsAppModalOpen}
+                onClose={() => setIsWhatsAppModalOpen(false)}
+            />
         </>
     );
 }
