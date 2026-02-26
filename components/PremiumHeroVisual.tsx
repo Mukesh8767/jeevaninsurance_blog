@@ -45,14 +45,19 @@ export default function PremiumHeroVisual() {
                     y: smY,
                     translateX: '-50%',
                     translateY: '-50%',
+                    background: 'radial-gradient(circle, rgba(0, 140, 62, 0.05) 0%, transparent 60%)'
                 }}
-                className="absolute top-0 left-0 w-[600px] h-[600px] bg-secondary/5 blur-[120px] rounded-full pointer-events-none"
+                className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full pointer-events-none"
             />
 
             {/* Mesh Gradient Blobs with Parallax */}
             <div className="absolute inset-0 opacity-40">
                 <motion.div
-                    style={{ x: layer1X, y: layer1Y }}
+                    style={{
+                        x: layer1X,
+                        y: layer1Y,
+                        background: 'radial-gradient(circle, rgba(0, 140, 62, 0.05) 0%, transparent 60%)'
+                    }}
                     animate={{
                         scale: [1, 1.2, 1],
                     }}
@@ -61,10 +66,14 @@ export default function PremiumHeroVisual() {
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="absolute -top-[10%] -left-[5%] w-[60%] h-[60%] rounded-full bg-gradient-to-br from-primary/[0.05] to-secondary/[0.05] blur-[100px]"
+                    className="absolute -top-[10%] -left-[5%] w-[60%] h-[60%] rounded-full"
                 />
                 <motion.div
-                    style={{ x: layer2X, y: layer2Y }}
+                    style={{
+                        x: layer2X,
+                        y: layer2Y,
+                        background: 'radial-gradient(circle, rgba(0, 1, 85, 0.03) 0%, transparent 60%)'
+                    }}
                     animate={{
                         scale: [1, 1.1, 1],
                     }}
@@ -73,7 +82,7 @@ export default function PremiumHeroVisual() {
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="absolute top-[30%] -right-[5%] w-[50%] h-[50%] rounded-full bg-gradient-to-bl from-slate-50 to-secondary/5 blur-[100px]"
+                    className="absolute top-[30%] -right-[5%] w-[50%] h-[50%] rounded-full"
                 />
             </div>
 
@@ -134,10 +143,7 @@ export default function PremiumHeroVisual() {
             {/* Dynamic Connecting Data Web */}
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
                 <defs>
-                    <filter id="node-glow-hero">
-                        <feGaussianBlur stdDeviation="2" result="blur" />
-                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
+                    {/* Glow filter removed for performance */}
                 </defs>
 
                 {/* Floating "Security & Trust" Nodes - Slower & Smoother */}
@@ -161,7 +167,7 @@ export default function PremiumHeroVisual() {
                             ease: "linear"
                         }}
                     >
-                        <circle r={Math.random() * 2 + 1} fill={i % 3 === 0 ? "#008C3E" : "#000155"} filter="url(#node-glow-hero)" className="opacity-40" />
+                        <circle r={Math.random() * 2 + 1} fill={i % 3 === 0 ? "#008C3E" : "#000155"} className="opacity-40" />
                         {i % 4 === 0 && (
                             <motion.circle
                                 r="12"

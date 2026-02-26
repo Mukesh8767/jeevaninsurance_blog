@@ -1,6 +1,7 @@
 'use client';
 
-import PremiumHeroVisual from './PremiumHeroVisual';
+import dynamic from 'next/dynamic';
+const PremiumHeroVisual = dynamic(() => import('./PremiumHeroVisual'), { ssr: false });
 import ContactForm from './ContactForm';
 import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Heart, Car, ShieldAlert, Home as HomeIcon, Plane, Users, Globe, Phone } from 'lucide-react';

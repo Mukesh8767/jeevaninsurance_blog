@@ -19,7 +19,7 @@ export default function FloatingElements() {
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
-                className="absolute left-[5%] top-[15%] p-4 bg-white/40 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl hidden lg:block"
+                className="absolute left-[5%] top-[15%] p-4 bg-white/90 border border-white/20 rounded-2xl shadow-xl hidden lg:block"
             >
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                     <Heart size={20} />
@@ -40,7 +40,7 @@ export default function FloatingElements() {
                     ease: "easeInOut",
                     delay: 1
                 }}
-                className="absolute right-[10%] top-[10%] p-4 bg-white/40 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl hidden lg:block"
+                className="absolute right-[10%] top-[10%] p-4 bg-white/90 border border-white/20 rounded-2xl shadow-xl hidden lg:block"
             >
                 <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-800">
                     <Shield size={20} />
@@ -61,7 +61,7 @@ export default function FloatingElements() {
                     ease: "easeInOut",
                     delay: 2
                 }}
-                className="absolute left-[12%] bottom-[20%] p-4 bg-white/40 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl hidden lg:block"
+                className="absolute left-[12%] bottom-[20%] p-4 bg-white/90 border border-white/20 rounded-2xl shadow-xl hidden lg:block"
             >
                 <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                     <Car size={20} />
@@ -100,7 +100,7 @@ export default function FloatingElements() {
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
-                className="absolute left-[45%] top-[40%] p-6 bg-white/60 backdrop-blur-2xl border border-white/40 rounded-3xl shadow-2xl hidden lg:block z-20"
+                className="absolute left-[45%] top-[40%] p-6 bg-white/90 border border-white/40 rounded-3xl shadow-2xl hidden lg:block z-20"
             >
                 <div className="flex items-center gap-4 mb-3">
                     <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">

@@ -4,6 +4,19 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 import { IMAGES } from '@/lib/assets';
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+    return [
+        { slug: 'health' },
+        { slug: 'life' },
+        { slug: 'motor' },
+        { slug: 'mutual-fund' },
+        { slug: 'nri-planning' },
+        { slug: 'retirement-planning' },
+    ];
+}
+
 // This would typically come from a database, but bridging for the layout demo
 const categoryData: Record<string, any> = {
     'motor': {
@@ -103,15 +116,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return { title: 'Not Found' };
 }
 
-const getCategoryGradient = (slug: string) => {
+const getCategoryAssets = (slug: string) => {
     switch (slug) {
-        case 'health': return 'from-cyan-600 to-blue-700';
-        case 'life': return 'from-indigo-900 to-purple-800';
-        case 'motor': return 'from-slate-700 to-gray-800';
-        case 'mutual-fund': return 'from-violet-600 to-indigo-700';
-        case 'nri-planning': return 'from-sky-600 to-blue-800';
-        case 'retirement-planning': return 'from-emerald-600 to-teal-700';
-        default: return 'from-slate-800 to-slate-900';
+        case 'health': return { gradient: 'from-cyan-600/90 to-blue-700/90', image: IMAGES.HEALTH.FAMILY };
+        case 'life': return { gradient: 'from-indigo-900/90 to-purple-800/90', image: IMAGES.LIFE.TERM };
+        case 'motor': return { gradient: 'from-slate-800/90 to-slate-900/90', image: IMAGES.MOTOR.CAR };
+        case 'mutual-fund': return { gradient: 'from-violet-600/90 to-indigo-800/90', image: IMAGES.INSIGHTS.WEALTH_TRANSFER };
+        case 'nri-planning': return { gradient: 'from-sky-700/90 to-blue-900/90', image: IMAGES.GENERAL.BUSINESS };
+        case 'retirement-planning': return { gradient: 'from-emerald-700/90 to-teal-900/90', image: IMAGES.HEALTH.SENIOR };
+        default: return { gradient: 'from-slate-800/90 to-slate-900/90', image: IMAGES.GENERAL.HOME };
     }
 };
 
@@ -176,31 +189,41 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     const { data: posts } = await postsQuery.order('created_at', { ascending: false });
 
     // For better UI, we might want to know the category gradient from the actual category
-    const categorySlugForGradient = actualCategory?.slug || slug;
-    const bgGradient = getCategoryGradient(categorySlugForGradient);
+    const categorySlugForAsset = actualCategory?.slug || slug;
+    const { gradient: bgGradient, image: heroImage } = getCategoryAssets(categorySlugForAsset);
 
     return (
         <main className="min-h-screen bg-slate-50">
-            {/* Minimal High-Performance Hero */}
-            <section className={`pt-32 pb-20 relative overflow-hidden bg-gradient-to-br ${bgGradient}`}>
-                <div className="absolute inset-0 opacity-10" style={{
-                    backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-                    backgroundSize: '40px 40px'
-                }}></div>
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+            {/* Immersive Image + Gradient Hero */}
+            <section className="pt-40 pb-24 relative overflow-hidden bg-slate-900 border-b border-slate-100">
+                {/* Background Image Layer */}
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src={heroImage}
+                        alt={`${title} Insurance Background`}
+                        className="w-full h-full object-cover opacity-60"
+                        loading="eager"
+                    />
+                </div>
 
-                <div className="container mx-auto px-6 lg:px-12 relative z-10 text-white text-center lg:text-left">
+                {/* Gradient Overlay Layer */}
+                <div className={`absolute inset-0 z-0 bg-gradient-to-r ${bgGradient}`} />
+
+                <div className="container mx-auto px-6 lg:px-12 relative z-10 text-center lg:text-left">
                     <div className="max-w-4xl">
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight leading-tight">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest mb-8 shadow-2xl">
+                            Insurance Portfolio
+                        </div>
+                        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight text-white drop-shadow-md">
                             {title}
                         </h1>
-                        <p className="text-xl text-white/90 font-light leading-relaxed max-w-2xl mb-10 mx-auto lg:mx-0">
+                        <p className="text-xl text-white/90 font-medium leading-relaxed max-w-2xl mb-12 mx-auto lg:mx-0 drop-shadow-md">
                             {subtitle}
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
                             <Link
                                 href="/contact"
-                                className="px-8 py-3.5 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-all flex items-center gap-2 shadow-lg hover:translate-y-[-2px]"
+                                className="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:bg-slate-100 transition-all flex items-center gap-2 shadow-xl shadow-slate-900/20 hover:-translate-y-1"
                             >
                                 Get a Quote <ArrowRight size={18} />
                             </Link>

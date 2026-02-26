@@ -65,7 +65,7 @@ export default function CategoryVisual({ type, className, animate = true }: Cate
                         d="M-50,300 L200,300 L100,100 Z"
                         fill={theme.c2}
                         opacity="0.4"
-                        style={{ filter: 'url(#glass-glow)' }}
+                        /* filter removed */
                         animate={animate ? { x: [0, 50, 0] } : {}}
                         transition={{ duration: 8, repeat: Infinity }}
                     />
@@ -97,7 +97,7 @@ export default function CategoryVisual({ type, className, animate = true }: Cate
                         d="M200,50 Q250,50 250,100 T200,200 T150,100 Q150,50 200,50"
                         fill={theme.c2}
                         opacity="0.3"
-                        style={{ filter: 'url(#glass-glow)' }}
+                        /* filter removed */
                         animate={animate ? {
                             scale: [1, 1.1, 1],
                             rotate: [-2, 2, -2]
@@ -141,16 +141,7 @@ export default function CategoryVisual({ type, className, animate = true }: Cate
                         <stop offset="0%" stopColor="white" stopOpacity="0.8" />
                         <stop offset="100%" stopColor="white" stopOpacity="0" />
                     </linearGradient>
-                    <filter id="glass-glow">
-                        <feGaussianBlur stdDeviation="10" result="coloredBlur" />
-                        <feMerge>
-                            <feMergeNode in="coloredBlur" />
-                            <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                    </filter>
-                    <filter id="noise">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
-                    </filter>
+                    {/* Filters removed for performance */}
                 </defs>
 
                 {/* Background Base */}
@@ -164,8 +155,7 @@ export default function CategoryVisual({ type, className, animate = true }: Cate
 
                 {renderShapes()}
 
-                {/* Texture Overlay for Realism */}
-                <rect width="100%" height="100%" filter="url(#noise)" opacity="0.05" />
+                {/* Texture Overlay removed for performance */}
             </svg>
 
             {/* Glossy Overlay for "Glass" Effect */}

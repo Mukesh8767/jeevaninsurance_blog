@@ -1,6 +1,7 @@
 import Hero from '@/components/Hero';
 import SolutionsTabs from '@/components/SolutionsTabs';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Quote } from 'lucide-react';
 import FeatureHighlights from '@/components/FeatureHighlights';
 import FAQ from '@/components/FAQ';
@@ -9,6 +10,8 @@ import IntelligentProtection from '@/components/IntelligentProtection';
 import ContactInfo from '@/components/ContactInfo';
 import PrinciplesSection from '@/components/PrinciplesSection';
 import { createClient } from '@/lib/supabaseServer';
+
+export const revalidate = 3600;
 
 async function getLatestPosts() {
   const supabase = await createClient();
@@ -74,10 +77,12 @@ export default async function Home() {
               <Link key={post.id} href={`/post/${post.slug}`} className="group">
                 <div className="aspect-[16/9] bg-slate-100 rounded-[2rem] overflow-hidden mb-8 relative border border-slate-100 shadow-xl shadow-slate-200/50">
                   {post.cover_image_url ? (
-                    <img
+                    <Image
                       src={post.cover_image_url}
                       alt={post.title}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-50 grayscale group-hover:grayscale-0 transition-all duration-1000">

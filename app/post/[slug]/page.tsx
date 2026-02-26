@@ -3,10 +3,25 @@ import PostRenderer from '@/components/PostRenderer';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Clock, Calendar, MessageCircle, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SocialShare from '@/components/SocialShare';
 import ReadingProgressBar from '@/components/ReadingProgressBar';
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+    const supabase = await createClient();
+    const { data: posts } = await supabase
+        .from('posts')
+        .select('slug')
+        .eq('status', 'published');
+
+    return posts?.map((post) => ({
+        slug: post.slug,
+    })) || [];
+}
 
 async function getPost(slug: string) {
     const supabase = await createClient();
@@ -25,10 +40,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!post) return {};
 
     return {
-        title: `${post.title} | JivanSecure`,
-        description: post.title,
+        title: `${post.title}`,
+        description: `Read "${post.title}" and expert insights from JivanSecure, your trusted premium insurance advisory.`,
         openGraph: {
             title: post.title,
+            description: `Read "${post.title}" and expert insights from JivanSecure.`,
+            images: post.cover_image_url ? [{ url: post.cover_image_url, width: 1200, height: 630 }] : [],
+            type: 'article',
+            authors: [post.profiles?.full_name || 'Satish Mishra'],
+            publishedTime: post.created_at,
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description: `Read "${post.title}" and expert insights from JivanSecure.`,
             images: post.cover_image_url ? [post.cover_image_url] : [],
         }
     };
@@ -42,18 +67,38 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         notFound();
     }
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: post.title,
+        image: post.cover_image_url ? [post.cover_image_url] : [],
+        author: {
+            "@type": "Person",
+            name: post.profiles?.full_name || "Satish Mishra"
+        },
+        datePublished: post.created_at,
+        dateModified: post.updated_at || post.created_at,
+    };
+
     return (
         <article className="min-h-screen bg-white selection:bg-blue-100 selection:text-blue-900">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <ReadingProgressBar />
 
             {/* HERO SECTION WITH LARGE COVER */}
             <div className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden bg-slate-900">
                 {post.cover_image_url ? (
                     <>
-                        <img
+                        <Image
                             src={post.cover_image_url}
-                            className="w-full h-full object-cover opacity-80"
                             alt={post.title}
+                            fill
+                            priority
+                            sizes="100vw"
+                            className="object-cover opacity-80"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
                     </>
