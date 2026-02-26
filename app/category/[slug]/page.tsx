@@ -85,7 +85,7 @@ interface BlogPost {
     blocks: any[];
 }
 
-import { createClient } from '@/lib/supabaseServer';
+import { createClient, createStatelessClient } from '@/lib/supabaseServer';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -99,7 +99,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
 
     // Try fetching from DB if not in static list
-    const supabase = await createClient();
+    const supabase = createStatelessClient();
     const { data: dbCategory } = await supabase
         .from('categories')
         .select('title')
@@ -132,7 +132,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     const { slug } = await params;
     const staticData = categoryData[slug];
 
-    const supabase = await createClient();
+    const supabase = createStatelessClient();
 
     // 1. Fetch Category or Subcategory from DB
     // We try to find if the slug belongs to a category or a subcategory

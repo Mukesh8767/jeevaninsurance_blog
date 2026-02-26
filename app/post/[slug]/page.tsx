@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabaseServer';
+import { createClient, createStatelessClient } from '@/lib/supabaseServer';
 import PostRenderer from '@/components/PostRenderer';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -12,7 +12,7 @@ import ReadingProgressBar from '@/components/ReadingProgressBar';
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-    const supabase = await createClient();
+    const supabase = createStatelessClient();
     const { data: posts } = await supabase
         .from('posts')
         .select('slug')
@@ -24,7 +24,7 @@ export async function generateStaticParams() {
 }
 
 async function getPost(slug: string) {
-    const supabase = await createClient();
+    const supabase = createStatelessClient();
     const { data: post } = await supabase
         .from('posts')
         .select('*, categories(title, slug), subcategories(title, slug), profiles(full_name)')

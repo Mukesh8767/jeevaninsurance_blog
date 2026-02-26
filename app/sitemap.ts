@@ -1,11 +1,11 @@
 import { MetadataRoute } from 'next';
-import { createClient } from '@/lib/supabaseServer';
+import { createClient, createStatelessClient } from '@/lib/supabaseServer';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jivansecure.com';
 
     // Get all published posts for dynamic routes
-    const supabase = await createClient();
+    const supabase = createStatelessClient();
     const { data: posts } = await supabase
         .from('posts')
         .select('slug, updated_at')

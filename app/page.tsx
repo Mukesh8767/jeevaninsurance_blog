@@ -9,12 +9,12 @@ import AboutTabs from '@/components/AboutTabs';
 import IntelligentProtection from '@/components/IntelligentProtection';
 import ContactInfo from '@/components/ContactInfo';
 import PrinciplesSection from '@/components/PrinciplesSection';
-import { createClient } from '@/lib/supabaseServer';
+import { createClient, createStatelessClient } from '@/lib/supabaseServer';
 
 export const revalidate = 3600;
 
 async function getLatestPosts() {
-  const supabase = await createClient();
+  const supabase = createStatelessClient();
 
   const { data: posts, error } = await supabase
     .from('posts')
@@ -38,7 +38,7 @@ async function getLatestPosts() {
 }
 
 export default async function Home() {
-  const supabase = await createClient();
+  const supabase = createStatelessClient();
 
   // RAW DEBUG FETCH
   const { data: rawPosts, error: rawError } = await supabase.from('posts').select('*');
