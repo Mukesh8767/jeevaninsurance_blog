@@ -7,13 +7,12 @@ html {
 :root {
   --background: #ffffff;
   --foreground: #020617;
-  --primary: #000155;
-  --secondary: #00A651;
-  --accent: #FFD700;
-  --teal: #1A535C;
+  --primary: #001f54;
+  --secondary: #00a859;
+  --accent: #b38b2d;
+  --teal: #1a535c;
   --muted: #f8fafc;
   --border: #e2e8f0;
-  /* Slate 200 */
 }
 
 @theme inline {
