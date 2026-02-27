@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield, ChevronDown, Lock, Megaphone, AlertCircle, Mail } from 'lucide-react';
+import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield, ChevronDown, Lock, Megaphone, AlertCircle, Mail, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -25,6 +25,7 @@ import { createClient } from '@/lib/supabaseClient';
 
 const defaultLinks = [
     { href: '/', label: 'Home', icon: Home },
+    { href: '/blogs', label: 'Blogs', icon: BookOpen },
     { href: '/category/life', label: 'Life', icon: Heart },
     { href: '/category/health', label: 'Health', icon: Activity },
     { href: '/category/motor', label: 'Motor', icon: Car },

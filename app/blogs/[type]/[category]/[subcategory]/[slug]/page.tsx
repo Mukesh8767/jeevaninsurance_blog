@@ -137,7 +137,7 @@ export default async function PostPage({ params }: { params: Promise<{ type: str
 
                             {/* SOCIAL SHARING (CLIENT COMPONENT) */}
                             <aside className="lg:col-span-1 hidden lg:block">
-                                <SocialShare url="" />
+                                <SocialShare url={`/blogs/${type}/${category}/${subcategory}/${slug}`} />
                             </aside>
 
                             {/* ARTICLE BODY */}
