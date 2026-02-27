@@ -25,11 +25,11 @@ import { createClient } from '@/lib/supabaseClient';
 
 const defaultLinks = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/blogs', label: 'Blogs', icon: BookOpen },
     { href: '/category/life', label: 'Life', icon: Heart },
     { href: '/category/health', label: 'Health', icon: Activity },
     { href: '/category/motor', label: 'Motor', icon: Car },
     { href: '/category/mutual-fund', label: 'Investments', icon: TrendingUp },
+    { href: '/blogs', label: 'Blogs', icon: BookOpen },
     {
         href: '/terms',
         label: 'Terms',
