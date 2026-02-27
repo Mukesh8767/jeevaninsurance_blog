@@ -73,6 +73,7 @@ interface BlogPost {
 }
 
 import { createClient } from '@/lib/supabaseServer';
+import { getPostUrl } from '@/lib/blogUtils';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -243,7 +244,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                             {posts.map((post: any) => (
                                 <Link
                                     key={post.id}
-                                    href={`/post/${post.slug}`}
+                                    href={getPostUrl(post)}
                                     className="group bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col h-full"
                                 >
                                     <div className="aspect-[16/9] overflow-hidden relative bg-slate-100">

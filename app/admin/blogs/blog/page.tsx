@@ -4,9 +4,10 @@ import { useEffect, useState, use } from 'react';
 import { createClient } from '@/lib/supabaseClient';
 import PostRenderer from '@/components/PostRenderer';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Clock, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Clock, Calendar, CheckCircle2, AlertCircle, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { getPostUrl } from '@/lib/blogUtils';
 
 export default function BlogReviewPage() {
     const searchParams = useSearchParams();
@@ -119,6 +120,16 @@ export default function BlogReviewPage() {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    {post.status === 'published' && (
+                        <Link
+                            href={getPostUrl(post)}
+                            target="_blank"
+                            className="px-5 py-2.5 text-blue-600 font-bold text-sm bg-blue-50 hover:bg-blue-100 rounded-xl transition-all flex items-center gap-2"
+                        >
+                            <Eye size={18} />
+                            View Live Post
+                        </Link>
+                    )}
                     <Link
                         href={`/admin/posts/${post.id}/edit`}
                         className="px-5 py-2.5 text-slate-600 font-bold text-sm bg-slate-100 hover:bg-slate-200 rounded-xl transition-all"
