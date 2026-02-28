@@ -62,6 +62,7 @@ export default function AboutTabs() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
+                                    suppressHydrationWarning
                                     className={cn(
                                         "px-4 py-3 lg:px-8 lg:py-4 text-xs lg:text-sm font-bold uppercase tracking-widest transition-all relative",
                                         activeTab === tab.id ? "text-secondary" : "text-slate-400 hover:text-primary"
@@ -69,7 +70,7 @@ export default function AboutTabs() {
                                 >
                                     {tab.label}
                                     {activeTab === tab.id && (
-                                        <motion.div
+                                        <motion.span
                                             layoutId="aboutUnderline"
                                             className="absolute bottom-0 left-0 right-0 h-0.5 bg-secondary"
                                         />

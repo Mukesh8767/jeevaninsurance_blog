@@ -186,6 +186,7 @@ export default function ContactForm({
                         whileTap={{ scale: 0.98 }}
                         type="submit"
                         disabled={isSubmitting}
+                        suppressHydrationWarning
                         className="group w-full bg-primary text-white font-semibold py-4 px-6 flex justify-between items-center transition-all disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary/20 hover:shadow-primary/40 rounded-xl"
                     >
                         <span>{isSubmitting ? 'Processing...' : 'Request Consultation'}</span>
