@@ -76,13 +76,13 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-x-12 gap-y-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
             {latestPosts.map((post: any) => {
               const postUrl = getPostUrl(post);
 
               return (
                 <Link key={post.id} href={postUrl} className="group flex flex-col">
-                  <div className="aspect-[16/9] bg-slate-50 rounded-[2.5rem] overflow-hidden mb-8 relative border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,31,84,0.1)] group-hover:shadow-[0_40px_80px_-20px_rgba(0,31,84,0.15)] transition-all duration-700">
+                  <div className="aspect-[16/10] bg-slate-50 rounded-3xl overflow-hidden mb-6 relative border border-slate-100 shadow-[0_15px_40px_-12px_rgba(0,31,84,0.08)] group-hover:shadow-[0_30px_60px_-15px_rgba(0,31,84,0.12)] transition-all duration-700">
                     {post.cover_image_url ? (
                       <img
                         src={post.cover_image_url}
@@ -105,7 +105,7 @@ export default async function Home() {
                       <span className="w-1 h-1 rounded-full bg-slate-200" />
                       <span className="">{new Date(post.created_at).toLocaleDateString()}</span>
                     </div>
-                    <h3 className="text-2xl font-black text-[#001f54] group-hover:text-[#00a859] transition-colors leading-[1.1] tracking-tight line-clamp-2">
+                    <h3 className="text-xl font-black text-[#001f54] group-hover:text-[#00a859] transition-colors leading-tight tracking-tight line-clamp-2">
                       {post.title}
                     </h3>
                     <p className="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed opacity-70 italic">

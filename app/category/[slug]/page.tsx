@@ -261,7 +261,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                     </div>
 
                     {posts && posts.length > 0 ? (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {posts.map((post: any) => (
                                 <Link
                                     key={post.id}
@@ -279,7 +279,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
-                                                <Shield size={64} className="text-slate-200 group-hover:text-[#00a859]/20 transition-all duration-700 group-hover:rotate-12" />
+                                                <Shield size={32} className="text-slate-200 group-hover:text-[#00a859]/20 transition-all duration-700 group-hover:rotate-12" />
                                             </div>
                                         )}
                                         <div className="absolute top-6 left-6">
@@ -288,16 +288,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="flex items-center gap-3 text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-4">
+                                    <div className="p-5 flex flex-col flex-1">
+                                        <div className="flex items-center gap-3 text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-3">
                                             <span className="flex items-center gap-1.5"><Clock size={12} className="text-[#00a859]" /> 6 MIN</span>
                                             <span className="w-1 h-1 rounded-full bg-slate-200" />
                                             <span>{new Date(post.created_at).toLocaleDateString()}</span>
                                         </div>
-                                        <h3 className="text-lg font-bold text-[#001f54] mb-3 group-hover:text-[#00a859] transition-colors line-clamp-2 leading-tight tracking-tight">
+                                        <h3 className="text-base font-bold text-[#001f54] mb-2 group-hover:text-[#00a859] transition-colors line-clamp-2 leading-tight tracking-tight">
                                             {post.title}
                                         </h3>
-                                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-3 mb-6 font-medium">
+                                        <p className="text-slate-500 text-[10px] leading-relaxed line-clamp-2 mb-4 font-medium opacity-70">
                                             {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this professional analysis...'}
                                         </p>
                                         <div className="mt-auto pt-4 border-t border-slate-50">
