@@ -185,7 +185,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     return (
         <main className="min-h-screen bg-slate-50">
             {/* Immersive Image + Gradient Hero */}
-            <section className="pt-40 pb-24 relative overflow-hidden bg-slate-900 border-b border-slate-100">
+            <section className="pt-32 pb-20 relative overflow-hidden bg-slate-900 border-b border-slate-100">
                 {/* Background Image Layer */}
                 <div className="absolute inset-0 z-0">
                     <img
@@ -204,38 +204,41 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest mb-8 shadow-2xl">
                             Insurance Portfolio
                         </div>
-                        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight text-white drop-shadow-md">
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight leading-tight text-white drop-shadow-sm">
                             {title}
                         </h1>
-                        <p className="text-xl text-white/90 font-medium leading-relaxed max-w-2xl mb-12 mx-auto lg:mx-0 drop-shadow-md">
+                        <p className="text-lg text-white/90 font-medium leading-relaxed max-w-2xl mb-10 mx-auto lg:mx-0">
                             {subtitle}
                         </p>
 
                         <div className="flex flex-wrap gap-6">
                             <Link
                                 href="/contact"
-                                className="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:bg-slate-100 transition-all flex items-center gap-2 shadow-xl shadow-slate-900/20 hover:-translate-y-1"
+                                className="px-6 py-3.5 bg-white text-slate-900 font-bold rounded-xl hover:bg-slate-100 transition-all flex items-center gap-2 shadow-xl shadow-slate-900/20 hover:-translate-y-0.5 text-sm"
                             >
-                                Get Expert Audit <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                                Get Expert Audit <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                             </Link>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* WHITE DIVIDER CARD STRIP */}
-            <div className="container mx-auto px-6 lg:px-12 -mt-16 relative z-30">
-                <div className="bg-white rounded-[2.5rem] shadow-[0_25px_80px_-20px_rgba(0,31,84,0.15)] border border-slate-50 overflow-hidden">
-                    <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-50">
+            {/* MINIMALISTIC FEATURE STRIP */}
+            <div className="container mx-auto px-6 lg:px-12 -mt-8 relative z-30 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+                <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] border border-white/40 shadow-[0_32px_64px_-16px_rgba(0,31,84,0.12)] p-2">
+                    <div className="flex flex-col md:flex-row items-stretch gap-1">
                         {features.map((feature: any, idx: number) => (
-                            <div key={idx} className="p-10 flex flex-col gap-4 group hover:bg-slate-50 transition-colors">
-                                <div className="w-12 h-12 rounded-xl bg-[#00a859]/5 text-[#00a859] flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    <CheckCircle2 size={24} />
+                            <div key={idx} className="flex-1 p-6 md:p-8 flex items-start gap-5 group rounded-2xl hover:bg-white/50 transition-all duration-300">
+                                <div className="w-10 h-10 rounded-xl bg-[#00a859] text-white flex items-center justify-center shrink-0 shadow-lg shadow-[#00a859]/20 group-hover:scale-110 transition-transform">
+                                    <CheckCircle2 size={18} strokeWidth={3} />
                                 </div>
-                                <div>
-                                    <h3 className="font-black text-[#001f54] text-lg mb-2 tracking-tight">{feature.title}</h3>
-                                    <p className="text-sm text-slate-500 font-medium leading-relaxed">{feature.desc}</p>
+                                <div className="space-y-1">
+                                    <h3 className="font-black text-[#001f54] text-sm tracking-tight">{feature.title}</h3>
+                                    <p className="text-[11px] text-slate-500 font-bold leading-relaxed opacity-80">{feature.desc}</p>
                                 </div>
+                                {idx < features.length - 1 && (
+                                    <div className="hidden md:block w-px bg-slate-200/50 h-8 self-center ml-auto" />
+                                )}
                             </div>
                         ))}
                     </div>
@@ -243,27 +246,27 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </div>
 
             {/* KNOWLEDGE HUB SECTION */}
-            <section className="py-32">
+            <section className="py-24">
                 <div className="container mx-auto px-6 lg:px-12">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                         <div className="max-w-xl text-center md:text-left">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00a859]/10 text-[#00a859] font-black text-[10px] uppercase tracking-widest mb-6">
-                                <Sparkles size={14} /> Knowledge Hub
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00a859]/10 text-[#00a859] font-bold text-[9px] uppercase tracking-widest mb-4">
+                                <Sparkles size={12} /> Knowledge Hub
                             </div>
-                            <h2 className="text-4xl md:text-5xl font-black text-[#001f54] tracking-tighter">Latest from {title}</h2>
+                            <h2 className="text-3xl md:text-4xl font-black text-[#001f54] tracking-tight">Latest from {title}</h2>
                         </div>
-                        <Link href="/blogs" className="font-black text-xs uppercase tracking-widest text-[#00a859] hover:text-[#001f54] transition-colors flex items-center gap-2">
-                            Explore All Blogs <ArrowUpRight size={18} />
+                        <Link href="/blogs" className="font-bold text-[10px] uppercase tracking-widest text-[#00a859] hover:text-[#001f54] transition-colors flex items-center gap-2">
+                            Explore All Blogs <ArrowUpRight size={16} />
                         </Link>
                     </div>
 
                     {posts && posts.length > 0 ? (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {posts.map((post: any) => (
                                 <Link
                                     key={post.id}
                                     href={getPostUrl(post)}
-                                    className="group bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 flex flex-col h-full relative"
+                                    className="group bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col h-full relative"
                                 >
                                     <div className="absolute top-0 left-0 w-full h-[6px] bg-[#00a859] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -285,21 +288,21 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="p-8 flex flex-col flex-1">
-                                        <div className="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-widest mb-6">
+                                    <div className="p-6 flex flex-col flex-1">
+                                        <div className="flex items-center gap-3 text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-4">
                                             <span className="flex items-center gap-1.5"><Clock size={12} className="text-[#00a859]" /> 6 MIN</span>
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-100" />
+                                            <span className="w-1 h-1 rounded-full bg-slate-200" />
                                             <span>{new Date(post.created_at).toLocaleDateString()}</span>
                                         </div>
-                                        <h3 className="text-xl font-black text-[#001f54] mb-4 group-hover:text-[#00a859] transition-colors line-clamp-2 leading-tight tracking-tight">
+                                        <h3 className="text-lg font-bold text-[#001f54] mb-3 group-hover:text-[#00a859] transition-colors line-clamp-2 leading-tight tracking-tight">
                                             {post.title}
                                         </h3>
-                                        <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-8 font-medium">
-                                            {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this professional analysis from JivanSecure on why this topic matters for your financial future...'}
+                                        <p className="text-slate-500 text-xs leading-relaxed line-clamp-3 mb-6 font-medium">
+                                            {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this professional analysis...'}
                                         </p>
-                                        <div className="mt-auto pt-6 border-t border-slate-50">
-                                            <span className="inline-flex items-center gap-2 text-xs font-black text-[#00a859] uppercase tracking-widest group-hover:gap-3 transition-all">
-                                                Read Analysis <ArrowRight size={14} />
+                                        <div className="mt-auto pt-4 border-t border-slate-50">
+                                            <span className="inline-flex items-center gap-2 text-[10px] font-bold text-[#00a859] uppercase tracking-widest group-hover:gap-3 transition-all">
+                                                Read Analysis <ArrowRight size={12} />
                                             </span>
                                         </div>
                                     </div>
@@ -307,16 +310,15 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-32 bg-white rounded-[4rem] border-2 border-dashed border-slate-100 shadow-inner">
-                            <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-[#001f54]/10">
-                                <Bookmark size={40} />
+                        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200 shadow-sm">
+                            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-[#001f54]/10">
+                                <Bookmark size={32} />
                             </div>
-                            <h3 className="text-3xl font-black text-[#001f54] mb-3">Insights Pending</h3>
-                            <p className="text-slate-500 max-w-sm mx-auto font-medium">
+                            <h3 className="text-2xl font-bold text-[#001f54] mb-2 tracking-tight">Insights Pending</h3>
+                            <p className="text-slate-500 max-w-xs mx-auto text-xs font-medium leading-relaxed">
                                 Our experts are currently drafting new guides and analysis for the {title} sector.
-                                Request a consultation for direct advice.
                             </p>
-                            <Link href="/contact" className="mt-10 inline-block px-10 py-4 bg-[#001f54] text-white font-black rounded-2xl text-xs uppercase tracking-widest hover:bg-[#00a859] transition-all">
+                            <Link href="/contact" className="mt-8 inline-block px-8 py-3 bg-[#001f54] text-white font-bold rounded-xl text-[10px] uppercase tracking-widest hover:bg-[#00a859] transition-all">
                                 Book Personal Audit
                             </Link>
                         </div>

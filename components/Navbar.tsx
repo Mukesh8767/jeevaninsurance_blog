@@ -155,29 +155,49 @@ export default function Navbar() {
                     <div className="flex items-center justify-between">
                         {/* Logo */}
                         <Link href="/" className="flex items-center gap-3 group relative z-50">
-                            <img
+                            <motion.img
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 10 }}
                                 src="/logo.png"
                                 alt="JivanSecure Logo"
-                                className="h-10 w-auto group-hover:scale-105 transition-transform duration-500"
+                                className="h-9 w-auto"
                             />
                         </Link>
 
                         {/* Desktop Menu */}
-                        <div className="hidden lg:flex items-center gap-6 xl:gap-8">
+                        <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            variants={{
+                                hidden: { opacity: 0 },
+                                visible: {
+                                    opacity: 1,
+                                    transition: { staggerChildren: 0.05 }
+                                }
+                            }}
+                            className="hidden lg:flex items-center gap-6 xl:gap-8"
+                        >
                             {links.map(link => (
-                                <div key={link.href} className="relative py-2 nav-dropdown-trigger">
+                                <motion.div
+                                    key={link.href}
+                                    variants={{
+                                        hidden: { opacity: 0, y: -10 },
+                                        visible: { opacity: 1, y: 0 }
+                                    }}
+                                    className="relative py-2 nav-dropdown-trigger"
+                                >
                                     {link.subItems ? (
                                         <>
                                             <button
                                                 onClick={() => setActiveDropdown(activeDropdown === link.label ? null : link.label)}
                                                 className="flex items-center gap-2 cursor-pointer outline-none group"
                                             >
-                                                <link.icon size={16} className={cn(
+                                                <link.icon size={15} className={cn(
                                                     "transition-colors duration-300",
                                                     (pathname?.startsWith(link.href) || activeDropdown === link.label) ? "text-primary" : "text-slate-400 group-hover:text-primary"
                                                 )} />
                                                 <span className={cn(
-                                                    "text-sm font-medium transition-all duration-300",
+                                                    "text-[13px] font-bold tracking-tight transition-all duration-300",
                                                     (pathname?.startsWith(link.href) || activeDropdown === link.label) ? "text-primary" : "text-slate-500 group-hover:text-primary"
                                                 )}>
                                                     {link.label}
@@ -194,10 +214,11 @@ export default function Navbar() {
                                                 {activeDropdown === link.label && (
                                                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 z-50">
                                                         <motion.div
-                                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                                            className="w-64 bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-2xl p-2"
+                                                            initial={{ opacity: 0, y: 10, scale: 0.9, filter: 'blur(10px)' }}
+                                                            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                                                            exit={{ opacity: 0, y: 10, scale: 0.9, filter: 'blur(10px)' }}
+                                                            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                                            className="w-64 bg-white/98 backdrop-blur-2xl rounded-2xl border border-slate-200/50 shadow-[0_20px_60px_-15px_rgba(0,31,84,0.15)] p-2"
                                                         >
                                                             <div className="grid gap-1">
                                                                 {link.subItems.map((subItem) => (
@@ -205,7 +226,7 @@ export default function Navbar() {
                                                                         key={subItem.href}
                                                                         href={subItem.href}
                                                                         className={cn(
-                                                                            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group/sub",
+                                                                            "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group/sub",
                                                                             pathname === subItem.href
                                                                                 ? "bg-primary/5 text-primary"
                                                                                 : "hover:bg-slate-50 text-slate-600 hover:text-primary"
@@ -213,11 +234,11 @@ export default function Navbar() {
                                                                     >
                                                                         <div className={cn(
                                                                             "w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-sm",
-                                                                            pathname === subItem.href ? "bg-primary text-white" : "bg-slate-100 text-slate-400 group-hover/sub:bg-primary/10 group-hover/sub:text-primary"
+                                                                            pathname === subItem.href ? "bg-primary text-white" : "bg-white border border-slate-100 text-slate-400 group-hover/sub:bg-primary/10 group-hover/sub:text-primary group-hover/sub:border-transparent"
                                                                         )}>
-                                                                            <subItem.icon size={14} />
+                                                                            <subItem.icon size={13} />
                                                                         </div>
-                                                                        <span className="text-sm font-semibold tracking-tight">{subItem.label}</span>
+                                                                        <span className="text-xs font-bold tracking-tight">{subItem.label}</span>
                                                                     </Link>
                                                                 ))}
                                                             </div>
@@ -231,52 +252,56 @@ export default function Navbar() {
                                             href={link.href}
                                             className="flex items-center gap-2 group relative"
                                         >
-                                            <link.icon size={16} className={cn(
+                                            <link.icon size={15} className={cn(
                                                 "transition-colors duration-300",
                                                 pathname === link.href ? "text-primary" : "text-slate-400 group-hover:text-primary"
                                             )} />
                                             <span className={cn(
-                                                "text-sm font-medium transition-all duration-300",
+                                                "text-[13px] font-bold tracking-tight transition-all duration-300",
                                                 pathname === link.href ? "text-primary" : "text-slate-500 group-hover:text-primary"
                                             )}>
                                                 {link.label}
                                             </span>
-                                            <span className={cn(
-                                                "absolute bottom-0 left-0 h-[2px] bg-secondary transition-all duration-300 ease-out",
-                                                pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
-                                            )} />
+                                            <motion.span
+                                                className={cn(
+                                                    "absolute -bottom-1 left-0 h-[2px] bg-secondary rounded-full",
+                                                    pathname === link.href ? "w-full" : "w-0"
+                                                )}
+                                                initial={false}
+                                                animate={{ width: pathname === link.href ? "100%" : "0%" }}
+                                                whileHover={{ width: "100%" }}
+                                            />
                                         </Link>
                                     )}
-                                </div>
+                                </motion.div>
                             ))}
+                        </motion.div>
+                        <div className="w-px h-6 bg-slate-200 mx-2" />
 
-                            <div className="w-px h-6 bg-slate-200 mx-2" />
-
-                            <div className="flex items-center gap-4">
-                                <a
-                                    href="tel:+919588472632"
-                                    className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-primary border border-slate-100 hover:bg-white hover:shadow-md hover:border-primary/20 transition-all"
-                                >
-                                    <Phone size={16} />
-                                </a>
-                                <button
-                                    onClick={() => setIsWhatsAppModalOpen(true)}
-                                    className="hidden xl:inline-flex items-center gap-2 px-5 py-2 bg-[#25D366] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#128C7E] transition-all shadow-lg shadow-green-200 hover:-translate-y-0.5"
-                                >
-                                    <WhatsAppIcon size={16} />
-                                    WhatsApp
-                                </button>
-                            </div>
+                        <div className="flex items-center gap-4">
+                            <a
+                                href="tel:+919588472632"
+                                className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-primary border border-slate-100 hover:bg-white hover:shadow-md hover:border-primary/20 transition-all"
+                            >
+                                <Phone size={16} />
+                            </a>
+                            <button
+                                onClick={() => setIsWhatsAppModalOpen(true)}
+                                className="hidden xl:inline-flex items-center gap-2 px-5 py-2 bg-[#25D366] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#128C7E] transition-all shadow-lg shadow-green-200 hover:-translate-y-0.5"
+                            >
+                                <WhatsAppIcon size={16} />
+                                WhatsApp
+                            </button>
                         </div>
-
-                        {/* Mobile Toggle */}
-                        <button
-                            className="lg:hidden p-2 text-primary z-50 focus:outline-none"
-                            onClick={() => setIsOpen(!isOpen)}
-                        >
-                            <Menu size={28} />
-                        </button>
                     </div>
+
+                    {/* Mobile Toggle */}
+                    <button
+                        className="lg:hidden p-2 text-primary z-50 focus:outline-none"
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        <Menu size={28} />
+                    </button>
                 </div>
             </motion.nav>
 
@@ -407,11 +432,12 @@ export default function Navbar() {
                             </div>
                         </motion.div>
                     </>
-                )}
-            </AnimatePresence>
+                )
+                }
+            </AnimatePresence >
 
             {/* Floating Action Buttons */}
-            <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+            < div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3" >
                 <div className="relative group">
                     <AnimatePresence>
                         {showWhatsAppHint && (
@@ -459,7 +485,7 @@ export default function Navbar() {
                 >
                     <Phone size={24} />
                 </motion.a>
-            </div>
+            </div >
 
             <WhatsAppModal
                 isOpen={isWhatsAppModalOpen}

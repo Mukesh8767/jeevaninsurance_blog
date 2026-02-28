@@ -2,7 +2,7 @@ import Hero from '@/components/Hero';
 import SolutionsTabs from '@/components/SolutionsTabs';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Quote } from 'lucide-react';
+import { Quote, Sparkles } from 'lucide-react';
 import FeatureHighlights from '@/components/FeatureHighlights';
 import FAQ from '@/components/FAQ';
 import AboutTabs from '@/components/AboutTabs';
@@ -67,20 +67,22 @@ export default async function Home() {
         <div className="container mx-auto px-6 lg:px-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
             <div className='max-w-2xl'>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-widest mb-6">
-                Market Analysis
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#00a859]/5 border border-[#00a859]/10 text-[#00a859] text-[9px] font-black uppercase tracking-[0.2em] mb-6">
+                <Sparkles size={12} strokeWidth={3} /> Intelligence Hub
               </div>
-              <h2 className="text-4xl font-bold text-slate-900 tracking-tight">Technical Case Studies</h2>
+              <h2 className="text-4xl lg:text-5xl font-black text-[#001f54] tracking-[-0.03em] leading-tight flex items-center gap-4">
+                Advisory Reports
+              </h2>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-16">
+          <div className="grid md:grid-cols-2 gap-x-12 gap-y-16">
             {latestPosts.map((post: any) => {
               const postUrl = getPostUrl(post);
 
               return (
-                <Link key={post.id} href={postUrl} className="group">
-                  <div className="aspect-[16/9] bg-slate-100 rounded-[2rem] overflow-hidden mb-8 relative border border-slate-100 shadow-xl shadow-slate-200/50">
+                <Link key={post.id} href={postUrl} className="group flex flex-col">
+                  <div className="aspect-[16/9] bg-slate-50 rounded-[2.5rem] overflow-hidden mb-8 relative border border-slate-100 shadow-[0_20px_50px_-15px_rgba(0,31,84,0.1)] group-hover:shadow-[0_40px_80px_-20px_rgba(0,31,84,0.15)] transition-all duration-700">
                     {post.cover_image_url ? (
                       <img
                         src={post.cover_image_url}
@@ -88,21 +90,28 @@ export default async function Home() {
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-50 grayscale group-hover:grayscale-0 transition-all duration-1000">
-                        <Quote size={64} className="text-slate-300" />
+                      <div className="w-full h-full flex items-center justify-center bg-slate-50 group-hover:bg-white transition-colors duration-700">
+                        <Quote size={48} className="text-slate-100 group-hover:text-[#00a859]/20 transition-all duration-700" />
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest text-primary rounded-full">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#001f54]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-[#001f54]/95 backdrop-blur text-[9px] font-black uppercase tracking-[0.2em] text-[#b38b2d] rounded-xl shadow-xl">
                       {post.categories?.title || 'Expert Analysis'}
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-primary mb-4 group-hover:text-secondary transition-colors leading-tight line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-slate-500 font-light line-clamp-2">
-                    {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this insightful article to learn more...'}
-                  </p>
+                  <div className="px-2 space-y-3">
+                    <div className="flex items-center gap-4 text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+                      <span className="text-[#00a859]">Technical Guide</span>
+                      <span className="w-1 h-1 rounded-full bg-slate-200" />
+                      <span className="">{new Date(post.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <h3 className="text-2xl font-black text-[#001f54] group-hover:text-[#00a859] transition-colors leading-[1.1] tracking-tight line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-slate-500 font-medium text-xs line-clamp-2 leading-relaxed opacity-70 italic">
+                      "{post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Explore our latest technical assessment and advisory report...'}"
+                    </p>
+                  </div>
                 </Link>
               );
             })}
