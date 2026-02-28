@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabaseClient';
-import { Plus, Trash2, Folder, FolderPlus, Tag, ChevronRight, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Folder, FolderPlus, Tag, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function CategoriesPage() {
@@ -19,19 +19,38 @@ export default function CategoriesPage() {
 
     const [isSavingCategory, setIsSavingCategory] = useState(false);
     const [isSavingSubcategory, setIsSavingSubcategory] = useState(false);
+    const [userRole, setUserRole] = useState<string | null>(null);
 
     useEffect(() => {
         fetchCategories();
+        checkUser();
     }, []);
+
+    const checkUser = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single();
+            if (profile) setUserRole(profile.role?.toLowerCase().trim());
+        }
+    };
 
     const fetchCategories = async () => {
         setLoading(true);
-        const { data } = await supabase
+        const { data, error } = await supabase
             .from('categories')
             .select('*, subcategories(*)')
             .order('title');
 
-        if (data) setCategories(data);
+        if (error) {
+            console.error('Fetch error:', error);
+            alert('Error loading categories: ' + error.message);
+        } else if (data) {
+            setCategories(data);
+        }
         setLoading(false);
     };
 
@@ -82,26 +101,60 @@ export default function CategoriesPage() {
     };
 
     const deleteCategory = async (id: string) => {
-        if (!confirm('Are you sure? This will delete all subcategories within this category and potentially affect posts.')) return;
+        if (!confirm('Are you sure? This will delete all subcategories within this category.')) return;
 
-        const { error } = await supabase.from('categories').delete().eq('id', id);
-        if (error) alert('Error: ' + error.message);
-        else fetchCategories();
+        const { data, error } = await supabase.from('categories').delete().eq('id', id).select();
+
+        if (error) {
+            alert('Error: ' + error.message);
+        } else if (!data || data.length === 0) {
+            alert('Permission Denied: Delete request sent but 0 rows were affected. Your RLS policies likely prevent you from deleting categories.');
+        } else {
+            fetchCategories();
+        }
     };
 
     const deleteSubcategory = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this subcategory?')) return;
+        if (!confirm('Are you sure you want to delete this subcategory? This may fail if it is assigned to existing blog posts.')) return;
 
-        const { error } = await supabase.from('subcategories').delete().eq('id', id);
-        if (error) alert('Error: ' + error.message);
-        else fetchCategories();
+        // Using .select() confirms if a row was actually deleted from the DB
+        const { data, error } = await supabase.from('subcategories').delete().eq('id', id).select();
+
+        console.log('Delete result:', { data, error });
+
+        if (error) {
+            console.error('Delete error:', error);
+            if (error.code === '23503') {
+                alert('Cannot delete this subcategory because it is still being used in some blog posts. Please reassign or delete those posts first.');
+            } else {
+                alert('Error: ' + error.message);
+            }
+        } else if (!data || data.length === 0) {
+            // This catches the "204 Success but nothing happened" scenario
+            alert('Permission Denied: Delete request succeeded but 0 rows were affected. This usually means Row Level Security (RLS) policies on your "subcategories" table are preventing this action for your account (current role: ' + (userRole || 'unknown') + ').');
+        } else {
+            fetchCategories();
+        }
     };
+
+    const isAdmin = userRole === 'admin' || userRole === 'administrator';
 
     return (
         <div className="max-w-6xl mx-auto space-y-10 pb-20">
-            <header>
-                <h1 className="text-3xl font-black text-slate-900 tracking-tight">Category & <span className="text-blue-600">Subcategory</span> Management</h1>
-                <p className="text-slate-500 mt-2">Organize your blog structure by managing taxonomy here.</p>
+            <header className="flex justify-between items-start">
+                <div>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Category & <span className="text-blue-600">Subcategory</span> Management</h1>
+                    <p className="text-slate-500 mt-2">Organize your blog structure by managing taxonomy here.</p>
+                </div>
+                {userRole && !isAdmin && (
+                    <div className="bg-amber-50 border border-amber-200 px-4 py-2 rounded-xl flex items-center gap-3">
+                        <AlertCircle size={18} className="text-amber-600" />
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-amber-800 tracking-widest leading-none">Authorization Warning</p>
+                            <p className="text-xs text-amber-700 font-medium mt-1">Logged in as <span className="font-bold">{userRole}</span>. You may not have permission to delete entries.</p>
+                        </div>
+                    </div>
+                )}
             </header>
 
             <div className="grid lg:grid-cols-2 gap-10">
@@ -132,7 +185,7 @@ export default function CategoriesPage() {
                                 {categories.map(cat => (
                                     <div
                                         key={cat.id}
-                                        onClick={() => setSelectedCategoryId(cat.id)}
+                                        onClick={() => setSelectedCategoryId(selectedCategoryId === cat.id ? null : cat.id)}
                                         className={cn(
                                             "group p-4 rounded-2xl transition-all cursor-pointer border",
                                             selectedCategoryId === cat.id
@@ -157,6 +210,7 @@ export default function CategoriesPage() {
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <button
+                                                    type="button"
                                                     onClick={(e) => { e.stopPropagation(); deleteCategory(cat.id); }}
                                                     className={cn(
                                                         "p-2 rounded-lg transition-colors",
@@ -180,7 +234,8 @@ export default function CategoriesPage() {
                                                             <span className="text-[10px] text-blue-200 font-mono">/{sub.slug}</span>
                                                         </div>
                                                         <button
-                                                            onClick={(e) => { e.stopPropagation(); deleteSubcategory(sub.id); }}
+                                                            type="button"
+                                                            onClick={(e) => { e.stopPropagation(); e.preventDefault(); deleteSubcategory(sub.id); }}
                                                             className="p-1.5 hover:bg-white/10 rounded-lg text-white/50 hover:text-white transition-colors"
                                                         >
                                                             <Trash2 size={14} />

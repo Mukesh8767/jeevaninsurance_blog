@@ -190,7 +190,7 @@ export default function BlogsListingPage() {
                         ))}
                     </div>
                 ) : filteredPosts.length > 0 ? (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-10">
+                    <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-12 gap-x-8">
                         {filteredPosts.map((post, idx) => (
                             <motion.div
                                 key={post.id}
@@ -202,7 +202,7 @@ export default function BlogsListingPage() {
                                     href={getPostUrl(post)}
                                     className="group block relative"
                                 >
-                                    <div className="aspect-[11/14] rounded-[2.5rem] overflow-hidden mb-8 relative bg-slate-100 border border-slate-100">
+                                    <div className="aspect-[16/11] rounded-3xl overflow-hidden mb-5 relative bg-slate-100 border border-slate-100">
                                         {post.cover_image_url ? (
                                             <img
                                                 src={post.cover_image_url}
@@ -211,10 +211,10 @@ export default function BlogsListingPage() {
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
-                                                <BookOpen size={48} className="text-slate-200" />
+                                                <BookOpen size={32} className="text-slate-200" />
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-[#001f54]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#001f54]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                                         <div className="absolute top-6 left-6">
                                             <span className="px-4 py-1.5 bg-white/95 backdrop-blur shadow-sm text-[9px] font-black uppercase tracking-[0.2em] text-[#001f54] rounded-lg">
@@ -229,11 +229,11 @@ export default function BlogsListingPage() {
                                             <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">{new Date(post.created_at).toLocaleDateString()}</span>
                                         </div>
 
-                                        <h3 className="text-2xl font-black text-[#001f54] leading-[1.1] tracking-tight group-hover:text-[#00a859] transition-colors">
+                                        <h3 className="text-lg font-black text-[#001f54] leading-tight tracking-tight group-hover:text-[#00a859] transition-colors line-clamp-2">
                                             {post.title}
                                         </h3>
 
-                                        <p className="text-slate-500 text-xs font-bold leading-relaxed line-clamp-2 opacity-70">
+                                        <p className="text-slate-500 text-[10px] font-bold leading-relaxed line-clamp-2 opacity-70">
                                             {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Access comprehensive advisory and technical details...'}
                                         </p>
 

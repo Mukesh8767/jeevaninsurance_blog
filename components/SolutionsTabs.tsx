@@ -190,6 +190,7 @@ export default function SolutionsTabs() {
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as TabId)}
+                                suppressHydrationWarning
                                 className={cn(
                                     "group relative p-5 lg:p-8 rounded-3xl transition-all duration-500 text-left overflow-hidden border border-transparent",
                                     isActive

@@ -63,6 +63,7 @@ export default function FAQ() {
                             >
                                 <button
                                     onClick={() => setActiveIndex(activeIndex === index ? null : index)}
+                                    suppressHydrationWarning
                                     className="w-full flex items-center justify-between p-6 text-left hover:bg-slate-50 transition-colors group"
                                 >
                                     <span className="text-lg font-bold text-primary pr-8">{faq.question}</span>
