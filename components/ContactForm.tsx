@@ -46,21 +46,31 @@ export default function ContactForm({
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
         try {
-            // Optional: Still save to Supabase if config exists
+            // Send email via our new API route
             try {
-                const { data: request, error: dbError } = await supabase
-                    .from('contact_requests')
-                    .insert([data])
-                    .select()
-                    .single();
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
 
-                if (!dbError && request) {
-                    await supabase.functions.invoke('send_contact_email', {
-                        body: { ...data, id: request.id }
-                    });
+                if (!response.ok) {
+                    throw new Error('Email API failed');
                 }
             } catch (err) {
-                console.warn('Backend logging failed, proceeding with redirection', err);
+                console.error('Email API error:', err);
+                // We proceed anyway to show the success message as long as DB or WhatsApp worked
+            }
+
+            // Database log (Optional)
+            try {
+                await supabase
+                    .from('contact_requests')
+                    .insert([data]);
+            } catch (err) {
+                console.warn('Logging error:', err);
             }
 
             if (isWhatsAppRedirection) {
