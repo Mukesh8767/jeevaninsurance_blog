@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Shield, TrendingUp, ArrowUpRight, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Shield, TrendingUp, ArrowUpRight, Clock, ArrowRight, CheckCircle2, Bookmark, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { IMAGES } from '@/lib/assets';
@@ -75,17 +75,8 @@ const categoryData: Record<string, any> = {
     }
 };
 
-interface BlogPost {
-    id: string;
-    title: string;
-    slug: string;
-    cover_image_url: string;
-    created_at: string;
-    profiles: { full_name: string } | null;
-    blocks: any[];
-}
-
 import { createClient, createStatelessClient } from '@/lib/supabaseServer';
+import { getPostUrl } from '@/lib/blogUtils';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
@@ -108,7 +99,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     if (dbCategory) {
         return {
-            title: `${dbCategory.title} | JivanSecure`,
+            title: `${dbCategory.title} | JivanSecure Insights`,
             description: `Expert insights and comprehensive guides on ${dbCategory.title}.`
         };
     }
@@ -135,7 +126,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     const supabase = createStatelessClient();
 
     // 1. Fetch Category or Subcategory from DB
-    // We try to find if the slug belongs to a category or a subcategory
     const { data: dbCategory } = await supabase
         .from('categories')
         .select('*')
@@ -169,9 +159,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         : (staticData?.subtitle || `Expert insights and comprehensive guides on ${title}.`);
 
     const features = staticData?.features || [
-        { title: 'Expert Analysis', desc: 'In-depth articles from industry veterans.' },
-        { title: 'Latest Trends', desc: 'Stay updated with the changing landscape.' },
-        { title: 'Practical Guides', desc: 'Step-by-step advice for your financial journey.' }
+        { title: 'Policy Audits', desc: 'Comprehensive review of your existing coverage.' },
+        { title: 'Expert Advisory', desc: 'Industry veterans protecting your interests.' },
+        { title: 'Quick Settlement', desc: 'Support during the entire claim lifecycle.' }
     ];
 
     // 2. Fetch Posts for this Category or Subcategory
@@ -220,30 +210,31 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                         <p className="text-xl text-white/90 font-medium leading-relaxed max-w-2xl mb-12 mx-auto lg:mx-0 drop-shadow-md">
                             {subtitle}
                         </p>
-                        <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+
+                        <div className="flex flex-wrap gap-6">
                             <Link
                                 href="/contact"
                                 className="px-8 py-4 bg-white text-slate-900 font-bold rounded-2xl hover:bg-slate-100 transition-all flex items-center gap-2 shadow-xl shadow-slate-900/20 hover:-translate-y-1"
                             >
-                                Get a Quote <ArrowRight size={18} />
+                                Get Expert Audit <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                             </Link>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Compressed Features Strip */}
-            <div className="bg-white border-b border-slate-200 shadow-sm relative z-20 -mt-8 mx-4 md:mx-12 rounded-xl flex overflow-hidden">
-                <div className="w-full overflow-x-auto">
-                    <div className="flex min-w-max p-6 md:p-8 divide-x divide-slate-100">
+            {/* WHITE DIVIDER CARD STRIP */}
+            <div className="container mx-auto px-6 lg:px-12 -mt-16 relative z-30">
+                <div className="bg-white rounded-[2.5rem] shadow-[0_25px_80px_-20px_rgba(0,31,84,0.15)] border border-slate-50 overflow-hidden">
+                    <div className="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-50">
                         {features.map((feature: any, idx: number) => (
-                            <div key={idx} className="px-8 first:pl-4 last:pr-4 flex items-center gap-4">
-                                <div className="p-2.5 rounded-lg bg-primary/5 text-primary">
-                                    <CheckCircle2 size={20} />
+                            <div key={idx} className="p-10 flex flex-col gap-4 group hover:bg-slate-50 transition-colors">
+                                <div className="w-12 h-12 rounded-xl bg-[#00a859]/5 text-[#00a859] flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <CheckCircle2 size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-slate-800 text-sm">{feature.title}</h3>
-                                    <p className="text-xs text-slate-500 font-medium">{feature.desc}</p>
+                                    <h3 className="font-black text-[#001f54] text-lg mb-2 tracking-tight">{feature.title}</h3>
+                                    <p className="text-sm text-slate-500 font-medium leading-relaxed">{feature.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -251,57 +242,64 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 </div>
             </div>
 
-            {/* Priority: Blogs Section */}
-            <section className="py-20">
+            {/* KNOWLEDGE HUB SECTION */}
+            <section className="py-32">
                 <div className="container mx-auto px-6 lg:px-12">
-                    <div className="flex items-end justify-between mb-12">
-                        <div>
-                            <span className="text-secondary font-bold uppercase tracking-widest text-xs">Expert Insights</span>
-                            <h2 className="text-3xl font-bold text-slate-900 mt-2">Latest Articles on {title}</h2>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                        <div className="max-w-xl text-center md:text-left">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00a859]/10 text-[#00a859] font-black text-[10px] uppercase tracking-widest mb-6">
+                                <Sparkles size={14} /> Knowledge Hub
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-black text-[#001f54] tracking-tighter">Latest from {title}</h2>
                         </div>
+                        <Link href="/blogs" className="font-black text-xs uppercase tracking-widest text-[#00a859] hover:text-[#001f54] transition-colors flex items-center gap-2">
+                            Explore All Blogs <ArrowUpRight size={18} />
+                        </Link>
                     </div>
 
                     {posts && posts.length > 0 ? (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                             {posts.map((post: any) => (
                                 <Link
                                     key={post.id}
-                                    href={`/post/${post.slug}`}
-                                    className="group bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col h-full"
+                                    href={getPostUrl(post)}
+                                    className="group bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 flex flex-col h-full relative"
                                 >
-                                    <div className="aspect-[16/9] overflow-hidden relative bg-slate-100">
+                                    <div className="absolute top-0 left-0 w-full h-[6px] bg-[#00a859] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                                    <div className="aspect-[16/10] overflow-hidden relative bg-slate-100">
                                         {post.cover_image_url ? (
                                             <img
                                                 src={post.cover_image_url}
                                                 alt={post.title}
-                                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                                className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-50">
-                                                <Shield size={64} className="text-slate-300" />
+                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 overflow-hidden">
+                                                <Shield size={64} className="text-slate-200 group-hover:text-[#00a859]/20 transition-all duration-700 group-hover:rotate-12" />
                                             </div>
                                         )}
-                                        <div className="absolute top-4 left-4">
-                                            <span className="px-3 py-1 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-wider text-slate-800 rounded-full shadow-sm">
+                                        <div className="absolute top-6 left-6">
+                                            <span className="px-4 py-2 bg-white/95 backdrop-blur text-[9px] font-black uppercase tracking-[0.2em] text-[#001f54] rounded-xl shadow-lg border border-slate-50">
                                                 {title}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="p-6 flex flex-col flex-1">
-                                        <div className="flex items-center gap-3 text-xs text-slate-400 font-medium mb-4">
-                                            <span className="flex items-center gap-1"><Clock size={12} /> 6 min read</span>
-                                            <span>•</span>
-                                            <span>{new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                    <div className="p-8 flex flex-col flex-1">
+                                        <div className="flex items-center gap-3 text-[10px] text-slate-400 font-black uppercase tracking-widest mb-6">
+                                            <span className="flex items-center gap-1.5"><Clock size={12} className="text-[#00a859]" /> 6 MIN</span>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-100" />
+                                            <span>{new Date(post.created_at).toLocaleDateString()}</span>
                                         </div>
-                                        <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                                        <h3 className="text-xl font-black text-[#001f54] mb-4 group-hover:text-[#00a859] transition-colors line-clamp-2 leading-tight tracking-tight">
                                             {post.title}
                                         </h3>
-                                        <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mb-6">
-                                            {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this insightful article to learn more...'}
+                                        <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 mb-8 font-medium">
+                                            {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this professional analysis from JivanSecure on why this topic matters for your financial future...'}
                                         </p>
-                                        <div className="mt-auto pt-4 border-t border-slate-100">
-                                            <span className="inline-flex items-center gap-1 text-sm font-bold text-primary group-hover:gap-2 transition-all">
-                                                Read Article <ArrowRight size={14} className="text-secondary" />
+                                        <div className="mt-auto pt-6 border-t border-slate-50">
+                                            <span className="inline-flex items-center gap-2 text-xs font-black text-[#00a859] uppercase tracking-widest group-hover:gap-3 transition-all">
+                                                Read Analysis <ArrowRight size={14} />
                                             </span>
                                         </div>
                                     </div>
@@ -309,14 +307,18 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
-                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-                                <TrendingUp size={24} />
+                        <div className="text-center py-32 bg-white rounded-[4rem] border-2 border-dashed border-slate-100 shadow-inner">
+                            <div className="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-8 text-[#001f54]/10">
+                                <Bookmark size={40} />
                             </div>
-                            <h3 className="text-lg font-bold text-slate-900 mb-2">Coming Soon</h3>
-                            <p className="text-slate-500 max-w-sm mx-auto">
-                                Our experts are crafting in-depth guides for {title}. Check back shortly.
+                            <h3 className="text-3xl font-black text-[#001f54] mb-3">Insights Pending</h3>
+                            <p className="text-slate-500 max-w-sm mx-auto font-medium">
+                                Our experts are currently drafting new guides and analysis for the {title} sector.
+                                Request a consultation for direct advice.
                             </p>
+                            <Link href="/contact" className="mt-10 inline-block px-10 py-4 bg-[#001f54] text-white font-black rounded-2xl text-xs uppercase tracking-widest hover:bg-[#00a859] transition-all">
+                                Book Personal Audit
+                            </Link>
                         </div>
                     )}
                 </div>

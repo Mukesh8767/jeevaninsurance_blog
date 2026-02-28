@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield, ChevronDown, Lock, Megaphone, AlertCircle, Mail } from 'lucide-react';
+import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield, ChevronDown, Lock, Megaphone, AlertCircle, Mail, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,6 +29,7 @@ const defaultLinks = [
     { href: '/category/health', label: 'Health', icon: Activity },
     { href: '/category/motor', label: 'Motor', icon: Car },
     { href: '/category/mutual-fund', label: 'Investments', icon: TrendingUp },
+    { href: '/blogs', label: 'Blogs', icon: BookOpen },
     {
         href: '/terms',
         label: 'Terms',

@@ -13,12 +13,14 @@ import { createClient, createStatelessClient } from '@/lib/supabaseServer';
 
 export const revalidate = 3600;
 
+import { getPostUrl } from '@/lib/blogUtils';
+
 async function getLatestPosts() {
   const supabase = createStatelessClient();
 
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('*, categories(*)')
+    .select('*, categories(*), subcategories(*)')
     .eq('status', 'published')
     .order('created_at', { ascending: false })
     .limit(2);
@@ -73,35 +75,37 @@ export default async function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-16">
-            {latestPosts.map((post: any) => (
-              <Link key={post.id} href={`/post/${post.slug}`} className="group">
-                <div className="aspect-[16/9] bg-slate-100 rounded-[2rem] overflow-hidden mb-8 relative border border-slate-100 shadow-xl shadow-slate-200/50">
-                  {post.cover_image_url ? (
-                    <Image
-                      src={post.cover_image_url}
-                      alt={post.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-50 grayscale group-hover:grayscale-0 transition-all duration-1000">
-                      <Quote size={64} className="text-slate-300" />
+            {latestPosts.map((post: any) => {
+              const postUrl = getPostUrl(post);
+
+              return (
+                <Link key={post.id} href={postUrl} className="group">
+                  <div className="aspect-[16/9] bg-slate-100 rounded-[2rem] overflow-hidden mb-8 relative border border-slate-100 shadow-xl shadow-slate-200/50">
+                    {post.cover_image_url ? (
+                      <img
+                        src={post.cover_image_url}
+                        alt={post.title}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-50 grayscale group-hover:grayscale-0 transition-all duration-1000">
+                        <Quote size={64} className="text-slate-300" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest text-primary rounded-full">
+                      {post.categories?.title || 'Expert Analysis'}
                     </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/90 backdrop-blur text-[10px] font-bold uppercase tracking-widest text-primary rounded-full">
-                    {post.categories?.title || 'Expert Analysis'}
                   </div>
-                </div>
-                <h3 className="text-2xl font-bold text-primary mb-4 group-hover:text-secondary transition-colors leading-tight line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-slate-500 font-light line-clamp-2">
-                  {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this insightful article to learn more...'}
-                </p>
-              </Link>
-            ))}
+                  <h3 className="text-2xl font-bold text-primary mb-4 group-hover:text-secondary transition-colors leading-tight line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-slate-500 font-light line-clamp-2">
+                    {post.blocks?.[0]?.data?.text?.[0]?.text || post.blocks?.[0]?.props?.text || 'Read this insightful article to learn more...'}
+                  </p>
+                </Link>
+              );
+            })}
 
             {latestPosts.length === 0 && (
               <div className="col-span-2 text-center py-20 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200">

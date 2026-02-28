@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, MessageCircle, Share2 } from 'lucide-react';
 
@@ -9,14 +9,21 @@ interface SocialShareProps {
 }
 
 export default function SocialShare({ url }: SocialShareProps) {
+    const [shareUrl, setShareUrl] = useState('');
+
+    useEffect(() => {
+        setShareUrl(url || window.location.href);
+    }, [url]);
+
     const handleCopy = () => {
         if (typeof navigator !== 'undefined') {
-            navigator.clipboard.writeText(url || window.location.href);
+            const currentUrl = shareUrl || window.location.href;
+            navigator.clipboard.writeText(currentUrl);
             alert('Link copied to clipboard!');
         }
     };
 
-    const shareUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
+    if (!shareUrl) return null; // Don't render until we have a URL (prevents mismatch)
 
     return (
         <div className="sticky top-32 flex flex-col gap-5 items-center">
