@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield, ChevronDown, Lock, Megaphone, AlertCircle, Mail, BookOpen } from 'lucide-react';
+import { Phone, MessageSquare, Home, Heart, Activity, Car, TrendingUp, Landmark, Shield, ChevronDown, Lock, Megaphone, AlertCircle, Mail, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -278,7 +278,7 @@ export default function Navbar() {
                         </motion.div>
                         <div className="w-px h-6 bg-slate-200 mx-2" />
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4">
                             <a
                                 href="tel:+919588472632"
                                 className="w-9 h-9 rounded-full bg-slate-50 flex items-center justify-center text-primary border border-slate-100 hover:bg-white hover:shadow-md hover:border-primary/20 transition-all"
@@ -292,20 +292,34 @@ export default function Navbar() {
                                 <WhatsAppIcon size={16} />
                                 WhatsApp
                             </button>
+
+                            {/* Mobile Toggle */}
+                            <button
+                                className="lg:hidden relative w-10 h-10 flex items-center justify-center text-primary focus:outline-none bg-white rounded-xl border border-slate-100 shadow-sm"
+                                onClick={() => setIsOpen(!isOpen)}
+                                aria-label="Toggle menu"
+                            >
+                                <div className="relative w-5 h-4">
+                                    <motion.span
+                                        animate={isOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+                                        className="absolute top-0 left-0 w-full h-0.5 bg-current rounded-full transition-transform"
+                                    />
+                                    <motion.span
+                                        animate={isOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
+                                        className="absolute top-[7px] left-0 w-full h-0.5 bg-current rounded-full transition-all"
+                                    />
+                                    <motion.span
+                                        animate={isOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+                                        className="absolute bottom-0 left-0 w-full h-0.5 bg-current rounded-full transition-transform"
+                                    />
+                                </div>
+                            </button>
                         </div>
                     </div>
-
-                    {/* Mobile Toggle */}
-                    <button
-                        className="lg:hidden p-2 text-primary z-50 focus:outline-none"
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        <Menu size={28} />
-                    </button>
                 </div>
             </motion.nav>
 
-            {/* Mobile Menu Overlay - Side Sheet (Moved Outside) */}
+            {/* Mobile Menu Overlay - Side Sheet */}
             <AnimatePresence>
                 {isOpen && (
                     <>
@@ -314,125 +328,168 @@ export default function Navbar() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsOpen(false)}
-                            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] lg:hidden"
+                            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[110] lg:hidden"
                         />
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white z-[120] lg:hidden shadow-2xl border-l border-slate-100"
+                            transition={{ type: "spring", damping: 28, stiffness: 220 }}
+                            className="fixed top-0 right-0 bottom-0 w-[85%] max-w-[340px] bg-white z-[120] lg:hidden shadow-2xl flex flex-col overflow-hidden"
                         >
-                            <div className="p-6 h-full flex flex-col">
-                                <div className="flex justify-between items-center mb-8">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold">J</div>
-                                        <span className="text-lg font-bold text-primary">Menu</span>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsOpen(false)}
-                                        className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
-                                    >
-                                        <X size={20} className="text-slate-600" />
-                                    </button>
+                            {/* Mobile Menu Header */}
+                            <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-20">
+                                <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-2">
+                                    <img src="/logo.png" alt="Logo" className="h-7 w-auto" />
+                                </Link>
+                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
+                                    Navigation
+                                </div>
+                            </div>
+
+                            {/* Mobile Menu Body */}
+                            <div className="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-6">
+                                <div className="space-y-2">
+                                    {links.map((link, i) => (
+                                        <motion.div
+                                            key={link.href}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: i * 0.05 }}
+                                        >
+                                            {link.subItems ? (
+                                                <div className="rounded-2xl border border-slate-100 overflow-hidden bg-slate-50/30">
+                                                    <button
+                                                        onClick={() => setActiveDropdown(activeDropdown === link.label ? null : link.label)}
+                                                        className={cn(
+                                                            "w-full flex items-center justify-between px-4 py-4 transition-colors",
+                                                            activeDropdown === link.label ? "bg-primary text-white" : "text-slate-700 hover:bg-slate-50"
+                                                        )}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <link.icon size={18} className={activeDropdown === link.label ? "text-white" : "text-primary"} />
+                                                            <span className="font-bold text-sm tracking-tight">{link.label}</span>
+                                                        </div>
+                                                        <ChevronDown
+                                                            size={16}
+                                                            className={cn("transition-transform duration-300", activeDropdown === link.label && "rotate-180")}
+                                                        />
+                                                    </button>
+                                                    <AnimatePresence>
+                                                        {activeDropdown === link.label && (
+                                                            <motion.div
+                                                                initial={{ height: 0, opacity: 0 }}
+                                                                animate={{ height: 'auto', opacity: 1 }}
+                                                                exit={{ height: 0, opacity: 0 }}
+                                                                className="overflow-hidden bg-white"
+                                                            >
+                                                                <div className="p-2 grid gap-1">
+                                                                    {link.subItems.map((subItem) => (
+                                                                        <Link
+                                                                            key={subItem.href}
+                                                                            href={subItem.href}
+                                                                            onClick={() => setIsOpen(false)}
+                                                                            className={cn(
+                                                                                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all",
+                                                                                pathname === subItem.href
+                                                                                    ? "bg-primary/5 text-primary font-bold"
+                                                                                    : "text-slate-600 hover:bg-slate-50 hover:text-primary"
+                                                                            )}
+                                                                        >
+                                                                            <div className={cn(
+                                                                                "w-8 h-8 rounded-lg flex items-center justify-center transition-colors shadow-sm",
+                                                                                pathname === subItem.href ? "bg-primary text-white" : "bg-slate-50 text-slate-400"
+                                                                            )}>
+                                                                                <subItem.icon size={14} />
+                                                                            </div>
+                                                                            <span className="text-sm font-medium">{subItem.label}</span>
+                                                                        </Link>
+                                                                    ))}
+                                                                </div>
+                                                            </motion.div>
+                                                        )}
+                                                    </AnimatePresence>
+                                                </div>
+                                            ) : (
+                                                <Link
+                                                    href={link.href}
+                                                    onClick={() => setIsOpen(false)}
+                                                    className={cn(
+                                                        "flex items-center justify-between px-5 py-4 rounded-2xl border transition-all",
+                                                        pathname === link.href
+                                                            ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
+                                                            : "bg-white border-slate-100 text-slate-700 hover:border-primary/30"
+                                                    )}
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <link.icon size={18} className={pathname === link.href ? "text-white" : "text-primary"} />
+                                                        <span className="font-bold text-sm tracking-tight">{link.label}</span>
+                                                    </div>
+                                                    {pathname === link.href && <motion.div layoutId="active-dot" className="w-1.5 h-1.5 rounded-full bg-white" />}
+                                                </Link>
+                                            )}
+                                        </motion.div>
+                                    ))}
                                 </div>
 
-                                <div className="flex-1 overflow-y-auto pr-2">
-                                    <div className="space-y-1">
-                                        {links.map((link, i) => (
-                                            <div key={link.href}>
-                                                {link.subItems ? (
-                                                    <div className="space-y-0.5">
-                                                        <div className="flex items-center gap-4 px-4 py-3 text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-4 first:mt-0">
-                                                            {link.label}
-                                                        </div>
-                                                        {link.subItems.map((subItem) => (
-                                                            <Link
-                                                                key={subItem.href}
-                                                                href={subItem.href}
-                                                                className={cn(
-                                                                    "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all border border-transparent",
-                                                                    pathname === subItem.href
-                                                                        ? "bg-primary/5 text-primary font-bold border-primary/10"
-                                                                        : "text-slate-600 hover:bg-slate-50 hover:text-primary"
-                                                                )}
-                                                                onClick={() => setIsOpen(false)}
-                                                            >
-                                                                <div className={cn(
-                                                                    "w-7 h-7 rounded-lg flex items-center justify-center transition-colors shadow-sm",
-                                                                    pathname === subItem.href ? "bg-primary text-white" : "bg-slate-100 text-slate-400"
-                                                                )}>
-                                                                    <subItem.icon size={12} />
-                                                                </div>
-                                                                <span className="font-medium text-[13px]">{subItem.label}</span>
-                                                            </Link>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <Link
-                                                        href={link.href}
-                                                        className={cn(
-                                                            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all border border-transparent",
-                                                            pathname === link.href
-                                                                ? "bg-primary/5 text-primary font-bold border-primary/10"
-                                                                : "text-slate-600 hover:bg-slate-50 hover:text-primary"
-                                                        )}
-                                                        onClick={() => setIsOpen(false)}
-                                                    >
-                                                        <link.icon size={16} className={pathname === link.href ? "text-secondary" : "text-slate-400"} />
-                                                        <span className="font-medium text-[13px]">{link.label}</span>
-                                                    </Link>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="h-px bg-slate-100 my-4" />
-
-                                    <div className="space-y-4 px-4">
-                                        <Link
-                                            href="/contact"
-                                            className="flex items-center gap-3 text-slate-600 hover:text-primary transition-colors"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                                <MessageSquare size={16} />
-                                            </div>
-                                            <span className="font-medium">Contact Us</span>
-                                        </Link>
+                                {/* Mobile Contact Quick Actions */}
+                                <div className="pt-4 border-t border-slate-50">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 px-1">Connect with us</p>
+                                    <div className="grid grid-cols-2 gap-3">
                                         <a
                                             href="tel:+919588472632"
-                                            className="flex items-center gap-3 text-slate-600 hover:text-primary transition-colors"
+                                            className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-primary/5 border border-primary/10 text-primary hover:bg-primary hover:text-white transition-all group"
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                                <Phone size={16} />
+                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                                                <Phone size={20} />
                                             </div>
-                                            <span className="font-medium">Call Now</span>
+                                            <span className="text-[11px] font-bold uppercase tracking-wider">Call Now</span>
                                         </a>
                                         <button
                                             onClick={() => {
                                                 setIsWhatsAppModalOpen(true);
                                                 setIsOpen(false);
                                             }}
-                                            className="flex items-center gap-3 text-slate-600 hover:text-[#25D366] transition-colors w-full text-left"
+                                            className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-green-50 border border-green-100 text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all group"
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-[#25D366]">
-                                                <WhatsAppIcon size={16} />
+                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                                                <WhatsAppIcon size={20} />
                                             </div>
-                                            <span className="font-medium">WhatsApp Consultation</span>
+                                            <span className="text-[11px] font-bold uppercase tracking-wider">WhatsApp</span>
                                         </button>
+                                        <Link
+                                            href="/contact"
+                                            onClick={() => setIsOpen(false)}
+                                            className="col-span-2 flex items-center justify-center gap-3 p-4 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 transition-all"
+                                        >
+                                            <MessageSquare size={18} />
+                                            <span className="text-xs font-bold uppercase tracking-widest">Send us a message</span>
+                                        </Link>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div className="mt-auto pt-8 border-t border-slate-100">
-                                    <p className="text-xs text-slate-400 text-center">
-                                        © {new Date().getFullYear()} JivanSecure
-                                    </p>
+                            {/* Mobile Menu Footer */}
+                            <div className="p-6 border-t border-slate-50 bg-slate-50/50">
+                                <div className="flex items-center justify-center gap-4 mb-4">
+                                    <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                                        <Shield size={14} />
+                                    </div>
+                                    <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                                        <Lock size={14} />
+                                    </div>
+                                    <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-colors cursor-pointer">
+                                        <Mail size={14} />
+                                    </div>
                                 </div>
+                                <p className="text-[10px] text-slate-400 text-center font-medium">
+                                    © {new Date().getFullYear()} JivanSecure Advisory Services
+                                </p>
                             </div>
                         </motion.div>
                     </>
                 )
+
                 }
             </AnimatePresence >
 
